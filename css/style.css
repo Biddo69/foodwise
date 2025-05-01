@@ -1,0 +1,224 @@
+/* Reset e stili base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f5f5f5;
+  color: #333;
+  line-height: 1.6;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Contenitore principale */
+.container {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  width: 100%;
+  max-width: 480px;
+}
+
+h2 {
+  color: #2c3e50;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 28px;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+/* Stile per i campi di input */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="number"] {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0 20px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="date"]:focus,
+input[type="number"]:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+/* Stile per i radio button */
+input[type="radio"] {
+  margin: 0 6px 0 15px;
+  cursor: pointer;
+}
+
+input[type="radio"]:first-of-type {
+  margin-left: 0;
+}
+
+/* Stile per le etichette */
+label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+/* Stile per il bottone */
+button {
+  background-color: #29b94d;
+  color: white;
+  border: none;
+  padding: 14px 20px;
+  margin-top: 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  width: 100%;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #29b94d;
+}
+
+/* Allineamento e spaziatura */
+br {
+  display: none;
+}
+
+/* Sezione del sesso biologico */
+div.radio-group {
+  margin: 15px 0;
+}
+
+.radio-option {
+  display: inline-block;
+  margin-right: 15px;
+}
+
+/* Stile per errori di validazione */
+input:invalid {
+  border-color: #e74c3c;
+}
+
+input:invalid:focus {
+  box-shadow: 0 0 5px rgba(231, 76, 60, 0.5);
+}
+
+/* Responsive design */
+@media (max-width: 500px) {
+  .container {
+    padding: 20px;
+  }
+  
+  h2 {
+    font-size: 24px;
+  }
+  
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="date"],
+  input[type="number"] {
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  button {
+    padding: 12px;
+    font-size: 14px;
+  }
+}
+
+/* Stile per l'header */
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo {
+  max-width: 150px;
+  margin-bottom: 10px;
+}
+
+/* Stile per la barra di navigazione */
+.navbar {
+  display: flex;
+  justify-content: center;
+  background-color: #3498db;
+  padding: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  margin: 0 15px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.navbar a:hover {
+  color: #f1c40f;
+}
+
+.logout {
+  color: #e74c3c;
+}
+
+.logout:hover {
+  color: #c0392b;
+}
+
+/* Stile per il messaggio */
+.message {
+  background-color: #f1c40f;
+  color: #333;
+  padding: 10px;
+  margin: 10px auto;
+  text-align: center;
+  border-radius: 5px;
+  max-width: 480px;
+  font-size: 14px;
+}
+
+#suggestions {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    overflow-y: auto;
+    background-color: white;
+    position: absolute;
+    width: calc(100% - 20px);
+    z-index: 1000;
+}
+
+#suggestions li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+#suggestions li:hover {
+    background-color: #f0f0f0;
+}
