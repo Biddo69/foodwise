@@ -5,8 +5,8 @@
 
     <h1>Accedi</h1>
     
-    Email <input type="email" name="email" required>
-    Password <input type="password" name="password" required>
+    Email <input type="email" name="email" required><br>
+    Password <input type="password" name="password" required><br>
     <button onclick="controllaCredenziali()">Login</button>
 
     <p>Non hai un account? <a href="registra.php">Registrati</a></p>
@@ -19,7 +19,7 @@
     async function controllaCredenziali() {
         let email = document.querySelector('input[name="email"]').value;
         let password = document.querySelector('input[name="password"]').value;
-        // Save email and password in session storage
+        
         sessionStorage.setItem('email', email);
         sessionStorage.setItem('password', password);
 
@@ -30,11 +30,11 @@
             if (!response.ok) {
                 throw new Error("Errore HTTP: " + response.status);
             }
-            let txt = await response.text(); // NON USARE JSON
+            let txt = await response.text();
             console.log(txt);
             let data = JSON.parse(txt);
             console.log(data);
-            window.location.href = "home.php";
+            window.location.href = "homepage.php";
             
         } catch (error) {
             console.error('Errore durante il login:', error);

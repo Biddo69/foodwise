@@ -1,27 +1,22 @@
 <?php 
-    require_once("../includes/conn.php"); 
+    require_once("../includes/conn.php");
+    require_once("../includes/header.php"); 
 ?>
 
-<h1>Registrazione</h1>
-<form action="gestoreAccesso" id="signin" method="post">
+  <h2>Registrati</h2>
 
-    Nome utente <input type="text" name="username" required>
-    Email <input type="email" name="email" required>
-    Password <input type="password" name="password" required>
-
-    Età <input type="number" name="age" required>
-
-    Sesso biologico: 
+  Username <input type="text" name="username"  required><br>
+  E-mail <input type="email" name="email" required><br>
+  Data di nascita <input type="date" name="data_nascita" required><br>
+  Peso in kg <input type="number" name="password" max="700" min="10"><br>
+  Altezza in cm <input type="password" name="password" max="270" min="50" required><br>
+  Sesso biologico: <br>
     <input type="radio" name="sesso" value="M" required> Maschio
-    <input type="radio" name="sesso" value="F" required> Femmina
-    <button type="submit">Registrati</button>
-
-    Peso <input type="number" name="peso" required>
-    Altezza <input type="number" name="altezza" required>
-
-</form>
-<p>Già registrato? <a href="login.php">Accedi</a></p>
+    <input type="radio" name="sesso" value="F" required> Femmina<br>
+  <button onclick="verificaCredenziali()">Invia</button>
+    
+    
 
 <?php 
-    require_once("../footer/conn.php"); 
+    require_once("../includes/footer.php"); 
 ?>

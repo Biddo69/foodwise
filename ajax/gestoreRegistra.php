@@ -1,60 +1,68 @@
 <?php
-    // gestoreAccesso.php
-    //AJAX per il login: riceve email e password via POST e restituisce JSON
+require_once("../includes/conn.php");
 
-    require_once("../includes/conn.php");
+// Attiva gli errori MySQLi per debug
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-    session_start();
+// Imposta risposta JSON
+header('Content-Type: application/json');
 
-    // Controllo per username
-    if (empty($_SESSION['username']) || empty($_SESSION['password']) || empty($_SESSION['eta']) || empty($_SESSION['sesso']) || empty($_SESSION['peso']) || empty($_SESSION['altezza'])) {
-        $vettoreRitorno = [];
-        $vettoreRitorno["status"] = "ERR";
-        $vettoreRitorno["msg"] = "Credenziali non valide.";
-        echo json_encode($vettoreRitorno);
-        die();
-    }
+// Recupera e valida input
+$username      = trim($_POST['username'] ?? '');
+$email         = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+$password      = $_POST['password'] ?? '';
+$data_nascita  = $_POST['data_nascita'] ?? '';
+$sesso         = $_POST['sesso'] ?? '';
+$peso          = $_POST['peso'] ?? '';
+$altezza       = $_POST['altezza'] ?? '';
 
-    if (!isset($_SESSION['username']) || !isset($_SESSION['password']) || !isset($_SESSION['eta']) || !isset($_SESSION['sesso']) || !isset($_SESSION['peso']) || !isset($_SESSION['altezza'])) {
-        $vettoreRitorno = [];
-        $vettoreRitorno["status"] = "ERR";
-        $vettoreRitorno["msg"] = "Credenziali non valide.";
-        echo json_encode($vettoreRitorno);
-        die();
-    }
-    
+if (!$username || !$email || !$password || !$data_nascita || !$sesso || !$peso || !$altezza) {
+    echo json_encode(['status'=>'ERR','msg'=>'Tutti i campi sono obbligatori.']);
+    exit;
+}
 
-    //questa riga controlla se l'email in input è valida tramite il filtro FILTER_VALIDATE_EMAIL, invece di fare un controllo manuale
-    $email =  filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
-    $password = md5($_POST['password']);
+// Verifica duplicati (email o username)
+$stmt = $conn->prepare("SELECT id FROM utente WHERE email = ? OR username = ? LIMIT 1");
+$stmt->bind_param('ss', $email, $username);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    if (!$email) {
+if ($result->num_rows > 0) {
+    echo json_encode(['status'=>'ERR','msg'=>'Email o username già registrati.']);
+    exit;
+}
+$stmt->close();
 
-        $vettoreRitorno = [];
-        $vettoreRitorno["status"] = "ERR";
-        $vettoreRitorno["msg"] = "Email non valida";
-        echo json_encode($vettoreRitorno);
-        die();
-    }
+// Calcola peso goal
+$passmd5    = md5($password);
+$altezza_m  = ((float)$altezza) / 100;
 
+$bmi_ideale = ($sesso === 'M') ? 23 : 21;
+$peso_goal  = round($bmi_ideale * $altezza_m * $altezza_m, 2);
 
-    // Inserisce i dati nel database
-    $query = "INSERT INTO utenti (username, passmd5, email, eta, sesso, peso, altezza) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param(
-        "sssssss",
-        $email,
-        $password,
-        $_SESSION['username'],
-        $_SESSION['eta'],
-        $_SESSION['sesso'],
-        $_SESSION['peso'],
-        $_SESSION['altezza']
-    );
-    $vettoreRitorno = [];
-    $vettoreRitorno["status"] = "OK";
-    $vettoreRitorno["msg"] = "Registrazione avvenuta con successo";
-    echo json_encode($vettoreRitorno);
-    $stmt->close();
-    die();
+// Inserisci nel DB
+$stmt = $conn->prepare("
+    INSERT INTO utente (username, passmd5, email, data_nascita, peso, altezza, peso_goal, sesso)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+");
+
+$stmt->bind_param(
+    'ssssdids',
+    $username,
+    $passmd5,
+    $email,
+    $data_nascita,
+    $peso,
+    $altezza,
+    $peso_goal,
+    $sesso
+);
+
+if ($stmt->execute()) {
+    echo json_encode(['status'=>'OK','msg'=>'Registrazione avvenuta con successo.']);
+} else {
+    echo json_encode(['status'=>'ERR','msg'=>'Errore durante la registrazione: ' . $stmt->error]);
+}
+$stmt->close();
+exit;
 ?>
