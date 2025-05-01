@@ -1,68 +1,134 @@
 <?php
-require_once("../includes/conn.php");
+    session_start();
+    require_once("../includes/conn.php");
 
-// Attiva gli errori MySQLi per debug
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+    //il try catch mi serve più che altro per la clausola finally, che chiude le connessioni e le risorse
+    //se non ci sono errori, il finally viene eseguito comunque 
+    try {
 
-// Imposta risposta JSON
-header('Content-Type: application/json');
+        //l'operatore ?? fa il controllo !isset e empty, se esiste il valore lo assegna altrimenti ritorna null
+        $username = $_GET["username"] ?? null;
+        $email = $_GET["email"] ?? null;
+        $passmd5 = md5($_GET["password"] ?? null);
+        $dataNascita = $_GET["dataNascita"] ?? null;
+        $peso = $_GET["peso"] ?? null;
+        $altezza = $_GET["altezza"] ?? null;
+        $sesso = $_GET["sesso"] ?? null;
 
-// Recupera e valida input
-$username      = trim($_POST['username'] ?? '');
-$email         = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
-$password      = $_POST['password'] ?? '';
-$data_nascita  = $_POST['data_nascita'] ?? '';
-$sesso         = $_POST['sesso'] ?? '';
-$peso          = $_POST['peso'] ?? '';
-$altezza       = $_POST['altezza'] ?? '';
+        // Validazione dei dati
+        if (!$username || !$email || !$dataNascita || !$peso || !$altezza || !$sesso) {
+            echo json_encode([
+                "status" => "ERR",
+                "msg" => "Tutti i campi sono obbligatori."
+            ]);
+            die();
+        }
 
-if (!$username || !$email || !$password || !$data_nascita || !$sesso || !$peso || !$altezza) {
-    echo json_encode(['status'=>'ERR','msg'=>'Tutti i campi sono obbligatori.']);
-    exit;
-}
+        // la funzione filter var praticamente semplifica i controlli Regex usando dei filtri preimpostati...
+        //in questo caso uso quello per le email, che controlla 
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo json_encode([
+                "status" => "ERR",
+                "msg" => "L'indirizzo email non è valido."
+            ]);
+            die();
+        }
 
-// Verifica duplicati (email o username)
-$stmt = $conn->prepare("SELECT id FROM utente WHERE email = ? OR username = ? LIMIT 1");
-$stmt->bind_param('ss', $email, $username);
-$stmt->execute();
-$result = $stmt->get_result();
+        //controllo se username e email esistono gia nel database
+        $query = "SELECT id FROM utente WHERE username = ? OR email = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ss", $username, $email);
+        $stmt->execute();
 
-if ($result->num_rows > 0) {
-    echo json_encode(['status'=>'ERR','msg'=>'Email o username già registrati.']);
-    exit;
-}
-$stmt->close();
+        if ($stmt->num_rows > 0) {
+            echo json_encode([
+                "status" => "ERR",
+                "msg" => "L'username o l'email sono già in uso."
+            ]);
+            $stmt->close();
+            die();
+        }
+        $stmt->close();
 
-// Calcola peso goal
-$passmd5    = md5($password);
-$altezza_m  = ((float)$altezza) / 100;
 
-$bmi_ideale = ($sesso === 'M') ? 23 : 21;
-$peso_goal  = round($bmi_ideale * $altezza_m * $altezza_m, 2);
+        // strtotime() converte una data in timestamp, che rappresenta il numero di secondi trascorsi dal 1 gennaio 1970
+        $dataNascitaTimestamp = strtotime($dataNascita);
 
-// Inserisci nel DB
-$stmt = $conn->prepare("
-    INSERT INTO utente (username, passmd5, email, data_nascita, peso, altezza, peso_goal, sesso)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-");
+        //calcolo l'età dell'utente usando il formato in anni, ma non tiene conto se il mese è gia passato...
+        $eta = date("Y") - date("Y", $dataNascitaTimestamp);
+        //controllo quindi se il mese e il giorno della nascita sono minori rispetto a quelli attuali, quindi tolgo un anno
+        if (date("md", $dataNascitaTimestamp) > date("md")) {
+            $eta--;
+        }
 
-$stmt->bind_param(
-    'ssssdids',
-    $username,
-    $passmd5,
-    $email,
-    $data_nascita,
-    $peso,
-    $altezza,
-    $peso_goal,
-    $sesso
-);
+        //controllo se l'eta è minore di 12 anni, che mi toglie i controlli per la data futura non valida
+        if ($eta < 12) {
+            echo json_encode([
+                "status" => "ERR",
+                "msg" => "L'utente deve avere almeno 12 anni."
+            ]);
+            die();
+        }
 
-if ($stmt->execute()) {
-    echo json_encode(['status'=>'OK','msg'=>'Registrazione avvenuta con successo.']);
-} else {
-    echo json_encode(['status'=>'ERR','msg'=>'Errore durante la registrazione: ' . $stmt->error]);
-}
-$stmt->close();
-exit;
+        // Controllo se il peso è un numero valido e maggiore di 0
+        if ($peso < 10 || $peso > 700) {
+            echo json_encode([
+                "status" => "ERR",
+                "msg" => "Il peso deve essere un numero valido."
+            ]);
+            die();
+        }
+
+        // Controllo se l'altezza è un numero valido e maggiore di 0
+        if ($altezza < 50 || $altezza > 270) {
+            echo json_encode([
+                "status" => "ERR",
+                "msg" => "L'altezza deve essere un numero valido."
+            ]);
+            die();
+        }
+
+        // Calcolo il peso ideal utilizzando la formula di Lorenz
+        if ($sesso == "M") {
+            $pesoGoal = $altezza - 100 - (($altezza - 150) / 4);
+        } 
+        else if ($sesso == "F") {
+            $pesoGoal = $altezza - 100 - (($altezza - 150) / 2.5);
+        }
+
+        $query = "INSERT INTO utente (username, email, passmd5, dataNascita, peso, altezza, sesso, pesoGoal) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ssssdisd", $username, $email, $passmd5, $dataNascita, $peso, $altezza, $sesso, $pesoGoal);
+
+        if ($stmt->execute()) {
+            echo json_encode([
+                "status" => "OK",
+                "msg" => "Registrazione completata con successo."
+            ]);
+        } 
+        else {
+            echo json_encode([
+                "status" => "ERR",
+                "msg" => "Errore durante la registrazione. Riprova più tardi."
+            ]);
+        }
+
+    } 
+    
+    catch (Exception $e) {
+        echo json_encode([
+            "status" => "ERR",
+            "msg" => "Si è verificato un errore: " . $e->getMessage()
+        ]);
+    } 
+    
+    finally {
+        // Chiusura delle risorse
+        if (isset($stmt) && $stmt !== false) {
+            $stmt->close();
+        }
+        if (isset($conn) && $conn !== false) {
+            $conn->close();
+        }
+    }
 ?>

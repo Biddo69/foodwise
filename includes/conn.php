@@ -5,13 +5,13 @@
     $password = "";      
     $database = "foodwise";
 
-    $mysqli = new mysqli($host, $username, $password, $database);
+    $conn = new mysqli($host, $username, $password, $database);
 
     // Verifica della connessione
-    if ($mysqli->connect_error) {
-        die("Connessione fallita: " . $mysqli->connect_error);
+    if ($conn->connect_error) {
+        die("Connessione fallita: " . $conn->connect_error);
     }
 
 
-    $mysqli->set_charset("utf8");
+    $conn->set_charset("utf8");
 ?>
