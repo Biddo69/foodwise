@@ -34,14 +34,16 @@
         }
 
         // Estrai i risultati
+        //La funzione map cicla tutti gli elementi dell'array e li modifica in un certo formato
         $results = array_map(function ($item) {
             $baseImageUrl = "https://spoonacular.com/cdn/ingredients_100x100/"; // Base URL per le immagini
             return [
                 'nome' => $item['name'] ?? 'Nome non disponibile',
-                'urlImmagine' => isset($item['image']) ? $baseImageUrl . $item['image'] : 'Immagine non disponibile'
+                'urlImmagine' => isset($item['image']) ? $baseImageUrl . $item['image'] : 'Immagine non disponibile',
+                'id' => $item['id'] ?? null
             ];
         }, $data);
-
+        
         // Restituisci i risultati come JSON
         echo json_encode($results);
     } catch (Exception $e) {

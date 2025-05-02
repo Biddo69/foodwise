@@ -62,10 +62,10 @@
         }
 
         //controllo se l'eta è minore di 12 anni, che mi toglie i controlli per la data futura non valida
-        if ($eta < 12) {
+        if ($eta < 12 || $eta > 120) {
             echo json_encode([
                 "status" => "ERR",
-                "msg" => "L'utente deve avere almeno 12 anni."
+                "msg" => "L'utente deve avere un'età compresa tra i 12 e i 120 anni."
             ]);
             die();
         }

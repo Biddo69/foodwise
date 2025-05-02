@@ -20,7 +20,7 @@ async function verificaCredenziali() {
     
     else if (datiRicevuti["status"]=="OK"){
       alert("Accesso avvenuto con successo!");
-      window.location.href = "ingrtedienti.php";
+      window.location.href = "ingredienti.php";
     }
 
-  }
+}

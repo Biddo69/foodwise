@@ -25,6 +25,8 @@
         <input type="password" id="password" name="password" required>
         <button onclick="verificaCredenziali()">Invia</button>    
     </div>
+
+    <a href="registra.php">Non hai un account? Registrati</a>
     
 </body>
 </html>
