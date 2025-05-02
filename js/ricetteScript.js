@@ -1,11 +1,11 @@
-async function cercaIngredienti() {
+async function cercaRicette() {
     let parametro = document.getElementById('parametro').value.trim();
     if (!parametro) {
-        alert("Inserisci un ingrediente da cercare.");
+        alert("Inserisci una ricetta da cercare.");
         return;
     }
 
-    let url = "../ajax/trovaIngredienti.php?parametro=" + encodeURIComponent(parametro);
+    let url = "../ajax/trovaRicette.php?parametro=" + encodeURIComponent(parametro);
 
     try {
         let response = await fetch(url);
@@ -25,30 +25,30 @@ async function cercaIngredienti() {
         let risultati = document.getElementById('risultati');
         risultati.innerHTML = ""; // Svuota la lista precedente
 
-        datiRicevuti.forEach(ingrediente => {
+        datiRicevuti.forEach(ricetta => {
             let li = document.createElement('li');
             li.innerHTML = `
                 <div style="display: flex; align-items: center;">
-                    <img src="${ingrediente.urlImmagine}" alt="${ingrediente.nome}" style="width: 50px; height: 50px;">
+                    <img src="${ricetta.urlImmagine}" alt="${ricetta.nome}" style="width: 50px; height: 50px;">
                     <div style="flex-grow: 1; margin-left: 15px;">
-                        <strong>${ingrediente.nome}</strong><br>
+                        <strong>${ricetta.nome}</strong><br>
                     </div>
-                    <button onclick="aggiungiAllaLista('${ingrediente.nome}')">Aggiungi alla lista della spesa</button>
-                    <button onclick="consumaIngrediente('${ingrediente.nome}')">Consuma questo ingrediente</button>
+                    <button onclick="dettagliRicetta('${ricetta.nome}')">Visualizza dettagli</button>
+                    <button onclick="aggiungiAiPreferiti('${ricetta.nome}')">Aggiungi ai preferiti</button>
                 </div>
             `;
             risultati.appendChild(li);
         });
     } catch (error) {
         console.error("Errore:", error);
-        alert("Si è verificato un errore durante la ricerca degli ingredienti.");
+        alert("Si è verificato un errore durante la ricerca deglla ricetta.");
     }
 }
 
 // Funzione per reindirizzare alla pagina con il nome del prodotto
-async function aggiungiAllaLista(nomeIngrediente) {
-    //passo all'ajax il nome del prodotto che verrà aggiunto alla lista della spesa
-    let url = `../ajax/aggiungiLista.php?nome=${encodeURIComponent(nomeIngrediente)}`;
+async function dettagliRicetta(nomeRicetta) {
+
+    let url = `../ajax/ottieniDettagliRicetta.php?&nome=${encodeURIComponent(nomeRicetta)}`;
     
     try {
         let response = await fetch(url);
@@ -69,27 +69,31 @@ async function aggiungiAllaLista(nomeIngrediente) {
         console.error("Errore:", error);
         alert("Si è verificato un errore durante l'aggiunta alla lista della spesa.");
     }
+    
 }
 
 // Funzione per reindirizzare alla pagina con il nome del prodotto
-function consumaIngrediente(nomeIngrediente) {
-
-    let quantita = prompt(`Inserisci la quantità consumata in grammi:`);
+async function aggiungiAiPreferiti(nomeRicetta) {
+    //passo all'ajax il nome del prodotto che verrà aggiunto alla lista della spesa
+    let url = `../ajax/aggiungiLista.php?nome=${encodeURIComponent(nomeRicetta)}`;
     
-    // Controlla se l'utente ha inserito un valore
-    if (quantita == null || quantita.trim() == "") {
-        alert("Quantità non inserita. Operazione annullata.");
-        return;
-    }
+    try {
+        let response = await fetch(url);
+        if (!response.ok) {
+            throw new Error("Non sono riuscito a fare la fetch!");
+        }
 
-    // Controlla che il valore sia un numero e maggiore di 0
-    //isNaN verifica se il valore è o meno un numero
-    // Number(quantita) converte il valore in un numero
-    if (isNaN(quantita) || Number(quantita) <= 0) {
-        alert("Inserisci un numero valido maggiore di 0.");
-        return;
-    }
+        // Leggi la risposta JSON dal server
+        let datiRicevuti = await response.json();
 
-    let url = `paginaDestinazione.php?&nome=${encodeURIComponent(nomeIngrediente)}`;
-    window.location.href = url;
+        // Controlla se l'operazione è andata a buon fine
+        if (datiRicevuti.success) {
+            alert(datiRicevuti.message); // Mostra il messaggio di successo
+        } else {
+            alert(`Errore: ${datiRicevuti.message}`); // Mostra il messaggio di errore
+        }
+    } catch (error) {
+        console.error("Errore:", error);
+        alert("Si è verificato un errore durante l'aggiunta alla lista della spesa.");
+    }
 }
