@@ -10,7 +10,11 @@ require_once("../includes/conn.php");
   <link rel="stylesheet" href="../css/style.css">
   <script src="../js/registraScript.js"></script>
 </head>
-  <img src="../img/logo.png"><br>
+<body>
+  <div class="header">
+    <img src="../img/logo.png" alt="FoodWise Logo">
+  </div>
+  
   <div class="container">
     <h2>Registrati</h2>
     
@@ -46,6 +50,5 @@ require_once("../includes/conn.php");
     
     <button type="button" onclick="verificaCredenziali()">Invia</button>
   </div>
-    
 </body>
 </html>

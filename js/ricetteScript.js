@@ -33,7 +33,7 @@ async function cercaRicette() {
                     <div style="flex-grow: 1; margin-left: 15px;">
                         <strong>${ricetta.nome}</strong><br>
                     </div>
-                    <button onclick="dettagliRicetta('${ricetta.nome}')">Visualizza dettagli</button>
+                    <button onclick="window.location.href='ricetteDettagli.php?nome=${encodeURIComponent(ricetta.nome)}'">Visualizza dettagli</button>
                     <button onclick="aggiungiAiPreferiti('${ricetta.nome}')">Aggiungi ai preferiti</button>
                 </div>
             `;
@@ -41,14 +41,12 @@ async function cercaRicette() {
         });
     } catch (error) {
         console.error("Errore:", error);
-        alert("Si è verificato un errore durante la ricerca deglla ricetta.");
+        alert("Si è verificato un errore durante la ricerca della ricetta.");
     }
 }
 
-// Funzione per reindirizzare alla pagina con il nome del prodotto
 async function dettagliRicetta(nomeRicetta) {
-
-    let url = `../ajax/ottieniDettagliRicetta.php?&nome=${encodeURIComponent(nomeRicetta)}`;
+    let url = `../ajax/ottieniDettagliRicetta.php?nome=${encodeURIComponent(nomeRicetta)}`;
     
     try {
         let response = await fetch(url);
@@ -61,20 +59,63 @@ async function dettagliRicetta(nomeRicetta) {
 
         // Controlla se l'operazione è andata a buon fine
         if (datiRicevuti.success) {
-            alert(datiRicevuti.message); // Mostra il messaggio di successo
+            let ricetta = datiRicevuti.results[0]; // Assumendo che ci sia almeno una ricetta nei risultati
+
+            if (!ricetta) {
+                alert("Nessuna ricetta trovata.");
+                return;
+            }
+
+            // Filtra i nutrienti che vuoi visualizzare
+            const nutrientiDaMostrare = ["Calories", "Protein", "Fat", "Carbohydrates", "Sugar", "Sodium"]; // Nomi dei nutrienti da visualizzare
+            const nutrientiFiltrati = ricetta.nutrients.filter(nutriente => 
+                nutrientiDaMostrare.includes(nutriente.title)
+            );
+
+            // Controlla se gli ingredienti sono presenti
+            // Controlla se gli ingredienti sono presenti
+            if (!ricetta.ingredients || ricetta.ingredients.length === 0) {
+                console.warn("Nessun ingrediente trovato per questa ricetta.");
+                ricetta.ingredients = ["Ingredienti non disponibili"];
+            }
+
+            // Popola la pagina con i dettagli della ricetta
+            let dettagliContainer = document.getElementById('dettagliRicetta');
+            dettagliContainer.innerHTML = `
+                <h2>${ricetta.title}</h2>
+                <img src="${ricetta.image}" alt="${ricetta.title}" style="width: 100%; max-width: 400px;">
+                <p><strong>Tempo di preparazione:</strong> ${ricetta.readyInMinutes} minuti</p>
+                <p><strong>Porzioni:</strong> ${ricetta.servings}</p>
+                <p><strong>Riassunto:</strong> ${ricetta.summary}</p>
+                <h3>Ingredienti:</h3>
+                <ul id="ingredienti-list"></ul>
+                <h3>Valori Nutrizionali:</h3>
+                <ul id="nutrienti-list"></ul>
+                <p><strong>Fonte:</strong> <a href="${ricetta.sourceUrl}" target="_blank">Vai alla ricetta originale</a></p>
+            `;
+
+            // Aggiungi gli ingredienti alla lista
+            let ingredientiList = document.getElementById('ingredienti-list');
+            ricetta.ingredients.forEach(ingrediente => {
+                let li = document.createElement('li');
+                li.innerHTML = `
+                    <div style="flex-grow: 1; margin-left: 15px;">
+                        <strong>${ingrediente.nome}</strong><br>
+                    </div>
+                    <button onclick="aggiungiAllaLista('${ingrediente.nome}')">Aggiungi alla lista</button>
+                `;
+                ingredientiList.appendChild(li);
+            });
         } else {
-            alert(`Errore: ${datiRicevuti.message}`); // Mostra il messaggio di errore
+            alert(`Errore: ${datiRicevuti.error || "Impossibile recuperare i dettagli della ricetta."}`);
         }
     } catch (error) {
         console.error("Errore:", error);
-        alert("Si è verificato un errore durante l'aggiunta alla lista della spesa.");
+        alert("Si è verificato un errore durante il recupero dei dettagli della ricetta.");
     }
-    
 }
 
-// Funzione per reindirizzare alla pagina con il nome del prodotto
 async function aggiungiAiPreferiti(nomeRicetta) {
-    //passo all'ajax il nome del prodotto che verrà aggiunto alla lista della spesa
     let url = `../ajax/aggiungiLista.php?nome=${encodeURIComponent(nomeRicetta)}`;
     
     try {
@@ -83,10 +124,8 @@ async function aggiungiAiPreferiti(nomeRicetta) {
             throw new Error("Non sono riuscito a fare la fetch!");
         }
 
-        // Leggi la risposta JSON dal server
         let datiRicevuti = await response.json();
 
-        // Controlla se l'operazione è andata a buon fine
         if (datiRicevuti.success) {
             alert(datiRicevuti.message); // Mostra il messaggio di successo
         } else {

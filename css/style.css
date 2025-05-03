@@ -188,3 +188,133 @@ footer {
     bottom: 0;
     width: 100%;
 }
+
+/* Contenitore principale per i dettagli della ricetta */
+#dettagliRicetta {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #2c2c2c; /* Sfondo scuro */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: #f5f5f5;
+}
+
+/* Titolo della ricetta */
+#dettagliRicetta h2 {
+    font-size: 2rem;
+    color: #4CAF50; /* Verde principale */
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Immagine della ricetta */
+#dettagliRicetta img {
+    display: block;
+    margin: 0 auto 20px;
+    border-radius: 10px;
+    max-width: 100%;
+    height: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Informazioni generali */
+#dettagliRicetta p {
+    font-size: 1rem;
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+/* Sezioni */
+#dettagliRicetta h3 {
+    font-size: 1.5rem;
+    color: #f5f5f5;
+    margin-top: 20px;
+    border-bottom: 2px solid #4CAF50; /* Linea verde */
+    padding-bottom: 5px;
+}
+
+/* Lista degli ingredienti e valori nutrizionali */
+#dettagliRicetta ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+#dettagliRicetta ul li {
+    background-color: #3a3a3a; /* Sfondo per gli elementi della lista */
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Pulsanti accanto agli ingredienti */
+#dettagliRicetta ul li button {
+    background-color: #4CAF50; /* Verde principale */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+#dettagliRicetta ul li button:hover {
+    background-color: #3e8e41; /* Verde scuro per hover */
+}
+
+/* Pulsante generale sotto gli ingredienti */
+#dettagliRicetta button {
+    display: block;
+    margin: 20px auto;
+    background-color: #4CAF50; /* Verde principale */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+#dettagliRicetta button:hover {
+    background-color: #3e8e41; /* Verde scuro per hover */
+}
+
+/* Link alla fonte */
+#dettagliRicetta a {
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#dettagliRicetta a:hover {
+    text-decoration: underline;
+}
+.messaggio {
+    color: #ff4d4d; /* Rosso per errori o messaggi */
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+/* Stile per il contenitore del link */
+.link-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.link-container a {
+    color: #4CAF50; /* Verde */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.link-container a:hover {
+    text-decoration: underline;
+}
