@@ -8,12 +8,17 @@
         exit;
     }
 ?>
-    <script src="../js/ingredientiScript.js"></script>
+    <script src="../js/listaScript.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            cercaIngredienti(false); // Chiamata automatica alla funzione
+            generaLista(); // Chiamata automatica alla funzione per generare la lista
         });
     </script>
+
+    <h1>La tua lista della spesa</h1>
+
+    <!-- Contenitore per la lista della spesa -->
+    <ul id="listaSpesa"></ul>
 
 <?php
     require_once("../includes/footer.php");

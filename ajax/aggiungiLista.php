@@ -64,7 +64,7 @@ if (isset($_GET['nome'])) {
             // Prepara i dati per l'inserimento nel database
             //?? fa i soliti controlli, nel caso non lo da imposta il nome che ha ottenuto dal get
             $nome = $dettagli['name'] ?? $nomeIngrediente;
-            $immagine = $dettagli['image'] ?? '';
+            $immagine = isset($dettagli['image']) ? "https://spoonacular.com/cdn/ingredients_100x100/" . $dettagli['image'] : 'Immagine non disponibile';
 
             //in pratica la quantità del nutriente si trova all'interno di nutrients, a sua volta in nutrition
             // $calorie = $dettagli['nutrition']['nutrients'][0]['amount'] ?? 0;

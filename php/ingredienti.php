@@ -9,6 +9,7 @@
     }
 ?>
     <script src="../js/ingredientiScript.js"></script>
+    <script src="../js/listaScript.js"></script>
     <h1>Ricerca un ingrediente</h1>
 
     <div class="search-container">
