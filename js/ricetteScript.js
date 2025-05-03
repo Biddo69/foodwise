@@ -116,7 +116,7 @@ async function dettagliRicetta(nomeRicetta) {
 }
 
 async function aggiungiAiPreferiti(nomeRicetta) {
-    let url = `../ajax/aggiungiLista.php?nome=${encodeURIComponent(nomeRicetta)}`;
+    let url = `../ajax/aggiungiPreferiti.php?nome=${encodeURIComponent(nomeRicetta)}`;
     
     try {
         let response = await fetch(url);
@@ -133,6 +133,76 @@ async function aggiungiAiPreferiti(nomeRicetta) {
         }
     } catch (error) {
         console.error("Errore:", error);
-        alert("Si è verificato un errore durante l'aggiunta alla lista della spesa.");
+        alert("Si è verificato un errore durante l'aggiunta ai preferiti.");
+    }
+}
+
+async function visualizzaPreferiti() {
+    let url = "../ajax/visualizzaPreferiti.php";
+
+    try {
+        let response = await fetch(url);
+        if (!response.ok) {
+            throw new Error("Errore durante la richiesta al server.");
+        }
+
+        let datiRicevuti = await response.json();
+
+        if (datiRicevuti.length === 0) {
+            document.getElementById("preferiti").innerHTML = "<li>Nessuna ricetta preferita trovata.</li>";
+            return;
+        }
+
+        let listaPreferiti = document.getElementById("preferiti");
+        listaPreferiti.innerHTML = ""; // Svuota la lista precedente
+
+        datiRicevuti.forEach(ricetta => {
+            let li = document.createElement("li");
+            li.classList.add("ricetta-item"); // Aggiungi una classe per lo stile
+
+            li.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                    <div style="display: flex; align-items: center;">
+                        <img src="${ricetta.immagine}" alt="${ricetta.nome}" class="lista-img">
+                        <div class="lista-info">
+                            <strong>${ricetta.nome}</strong><br>
+                            <small>Porzioni: ${ricetta.porzioni || "N/A"}</small><br>
+                            <small>Tempo: ${ricetta.tempoPreparazione || "N/A"} min</small>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="lista-btn" onclick="window.location.href='ricetteDettagli.php?nome=${encodeURIComponent(ricetta.nome)}'">Dettagli</button>
+                        <button class="lista-btn rimuovi-btn" onclick="rimuoviDaiPreferiti('${ricetta.nome}')">Rimuovi</button>
+                    </div>
+                </div>
+            `;
+            listaPreferiti.appendChild(li);
+        });
+    } catch (error) {
+        console.error("Errore:", error);
+        document.getElementById("preferiti").innerHTML = "<li>Errore durante il caricamento delle ricette preferite.</li>";
+    }
+}
+
+async function rimuoviDaiPreferiti(nomeRicetta) {
+    let url =`../ajax/rimuoviPreferiti.php?nome=${encodeURIComponent(nomeRicetta)}`;
+
+    try {
+        let response = await fetch(url);
+        if (!response.ok) {
+            throw new Error("Errore durante la richiesta al server.");
+        }
+
+        let datiRicevuti = await response.json();
+
+        if (datiRicevuti.success) {
+            alert(datiRicevuti.message);
+            visualizzaPreferiti(); // Aggiorna la lista dopo la rimozione
+        } else {
+            alert(datiRicevuti.error || "Errore durante la rimozione.");
+        }
+    } catch (error) {
+        console.error("Errore:", error);
+        alert("Si è verificato un errore durante la rimozione della ricetta.");
     }
 }
