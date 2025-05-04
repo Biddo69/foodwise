@@ -14,7 +14,7 @@
 
     <div class="search-container">
         <!-- on key down mi permette di inviare la ricerca anche premendo invio -->
-        <input type="text" id="parametro" placeholder="Es. burro" onkeydown="if (event.key == 'Enter') cercaIngredienti()">
+        <input type="text" id="parametro" placeholder="Es. butter" onkeydown="if (event.key == 'Enter') cercaIngredienti()">
         <input type="image" src="../img/cerca.png" width="20" height="20" onclick="cercaIngredienti()">
     </div>
     

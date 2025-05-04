@@ -2,6 +2,9 @@
 
 // Avvia la sessione
 session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 require_once("../includes/conn.php");
 
 // Controlla se il parametro 'nome' è stato passato nella query string
@@ -12,7 +15,7 @@ if (isset($_GET['nome'])) {
     $nomeIngrediente = htmlspecialchars($_GET['nome']);
 
     // Chiave API di Spoonacular
-    $apiKey = '231a8a4b07354057a8d4a56f0fb7716c';
+    $apiKey = '2014d19b1b2f4a5bb63e28976081687d';
 
     // URL per ottenere i dettagli dell'ingrediente
     $url = "https://api.spoonacular.com/food/ingredients/search?query=" . urlencode($nomeIngrediente) . "&apiKey=" . $apiKey;
@@ -78,14 +81,15 @@ if (isset($_GET['nome'])) {
             // Query per inserire i dati nel database
             // $query = "INSERT INTO ingrediente (nome, immagine, calorie, proteine, grassi, carboidrati, zucchero, sodio, categoria)
 
-            $query = "INSERT INTO ingrediente (nome, immagine)
-                    VALUES (?, ?)";
+            $query = "INSERT INTO ingrediente (id, nome, immagine)
+                    VALUES (?, ?, ?)";
 
             // Prepara la query
             $stmt = $conn->prepare($query);
             $stmt->bind_param(
                 // "ssdddddds",
-                "ss",
+                "iss",
+                $idIngrediente,
                 $nome,
                 $immagine,
                 // $calorie,
@@ -99,9 +103,6 @@ if (isset($_GET['nome'])) {
 
             // Esegui la query
             $stmt->execute();
-
-            //questa funzione ritorna l'ultimo id inserito come autoincrement da stmt, molto figo
-            $idIngrediente = $stmt->insert_id;
         } 
         else {
             $rowIngrediente = $resultCheck->fetch_assoc();
@@ -144,7 +145,8 @@ if (isset($_GET['nome'])) {
         $resultCheckIngredienteInLista = $stmtCheckIngredienteInLista->get_result();
 
         if ($resultCheckIngredienteInLista->num_rows > 0) {
-            throw new Exception("L'ingrediente è già presente nella lista.");
+            echo json_encode(['success' => false, 'message' => "L'ingrediente è già presente nella lista."]);
+            exit; // Interrompi l'esecuzione se l'ingrediente è già presente
         }
 
         // Inserisce l'ingrediente nella tabella listaIngrediente

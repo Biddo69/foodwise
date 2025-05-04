@@ -35,6 +35,7 @@ async function cercaRicette() {
                     </div>
                     <button onclick="window.location.href='ricetteDettagli.php?nome=${encodeURIComponent(ricetta.nome)}'">Visualizza dettagli</button>
                     <button onclick="aggiungiAiPreferiti('${ricetta.nome}')">Aggiungi ai preferiti</button>
+                    <button onclick="consumaRicetta('${ricetta.nome}')">Consuma ricetta</button>
                 </div>
             `;
             risultati.appendChild(li);
@@ -149,7 +150,7 @@ async function visualizzaPreferiti() {
         let datiRicevuti = await response.json();
 
         if (datiRicevuti.length === 0) {
-            document.getElementById("preferiti").innerHTML = "<li>Nessuna ricetta preferita trovata.</li>";
+            document.getElementById("preferiti").innerHTML = "<li class='messaggio'>Nessuna ricetta preferita trovata.</li>";
             return;
         }
 
@@ -158,11 +159,11 @@ async function visualizzaPreferiti() {
 
         datiRicevuti.forEach(ricetta => {
             let li = document.createElement("li");
-            li.classList.add("ricetta-item"); // Aggiungi una classe per lo stile
+            li.classList.add("lista-item"); // Aggiungi una classe per lo stile
 
             li.innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                    <div style="display: flex; align-items: center;">
+                <div class="lista-contenitore">
+                    <div class="lista-dettagli">
                         <img src="${ricetta.immagine}" alt="${ricetta.nome}" class="lista-img">
                         <div class="lista-info">
                             <strong>${ricetta.nome}</strong><br>
@@ -170,7 +171,7 @@ async function visualizzaPreferiti() {
                             <small>Tempo: ${ricetta.tempoPreparazione || "N/A"} min</small>
                         </div>
                     </div>
-                    <div>
+                    <div class="lista-azioni">
                         <button class="lista-btn" onclick="window.location.href='ricetteDettagli.php?nome=${encodeURIComponent(ricetta.nome)}'">Dettagli</button>
                         <button class="lista-btn rimuovi-btn" onclick="rimuoviDaiPreferiti('${ricetta.nome}')">Rimuovi</button>
                     </div>
@@ -180,7 +181,7 @@ async function visualizzaPreferiti() {
         });
     } catch (error) {
         console.error("Errore:", error);
-        document.getElementById("preferiti").innerHTML = "<li>Errore durante il caricamento delle ricette preferite.</li>";
+        document.getElementById("preferiti").innerHTML = "<li class='messaggio'>Errore durante il caricamento delle ricette preferite.</li>";
     }
 }
 
@@ -204,5 +205,34 @@ async function rimuoviDaiPreferiti(nomeRicetta) {
     } catch (error) {
         console.error("Errore:", error);
         alert("Si è verificato un errore durante la rimozione della ricetta.");
+    }
+}
+
+async function consumaRicetta(nomeRicetta) {
+    let porzioni = prompt("Quante porzioni hai consumato?", "1");
+    
+    if (!porzioni || isNaN(porzioni) || porzioni <= 0) {
+        alert("Inserisci un numero valido di porzioni.");
+        return;
+    }
+
+    let url = `../ajax/consumaRicetta.php?nome=${encodeURIComponent(nomeRicetta)}&porzioni=${encodeURIComponent(porzioni)}`;
+    
+    try {
+        let response = await fetch(url);
+        if (!response.ok) {
+            throw new Error("Non sono riuscito a fare la fetch!");
+        }
+
+        let datiRicevuti = await response.json();
+
+        if (datiRicevuti.success) {
+            alert(datiRicevuti.message); // Mostra il messaggio di successo
+        } else {
+            alert(`Errore: ${datiRicevuti.message}`); // Mostra il messaggio di errore
+        }
+    } catch (error) {
+        console.error("Errore:", error);
+        alert("Si è verificato un errore durante la registrazione del consumo della ricetta.");
     }
 }

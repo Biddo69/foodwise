@@ -9,7 +9,7 @@
     }
 ?>
     <script src="../js/ricetteScript.js"></script>
-    <script src="../js/ingredientiScript.js"></script>
+    <script src="../js/listaScript.js"></script>
     
     <script>
         document.addEventListener("DOMContentLoaded", function() {
