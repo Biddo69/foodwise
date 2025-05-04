@@ -5,11 +5,6 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
-    if (!isset($_SESSION['userData']['id'])) {
-        echo json_encode(['error' => 'Utente non autenticato.']);
-        exit;
-    }
-
     require_once("../includes/conn.php");
 
     try {

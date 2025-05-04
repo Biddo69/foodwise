@@ -6,10 +6,6 @@
     error_reporting(E_ALL);
     session_start();
 
-    if (!isset($_SESSION['userData']['id'])) {
-        echo json_encode(['error' => 'Utente non autenticato.']);
-        exit;
-    }
 
     $query = isset($_GET['nome']) ? $_GET['nome'] : '';
     $apiKey = '0072b1f00e0c42dbbd1757f463c8d8c9';
