@@ -28,13 +28,11 @@ async function cercaIngredienti() {
         datiRicevuti.forEach(ingrediente => {
             let li = document.createElement('li');
             li.innerHTML = `
-                <div style="display: flex; align-items: center;">
-                    <img src="${ingrediente.urlImmagine}" alt="${ingrediente.nome}" style="width: 50px; height: 50px;">
-                    <div style="flex-grow: 1; margin-left: 15px;">
-                        <strong>${ingrediente.nome}</strong><br>
-                    </div>
-                    <button onclick="aggiungiAllaLista('${ingrediente.nome}')">Aggiungi alla lista della spesa</button>
+                <img src="${ingrediente.urlImmagine}" alt="${ingrediente.nome}" class="lista-img">
+                <div class="lista-info">
+                    <strong>${ingrediente.nome}</strong>
                 </div>
+                <button class="lista-btn" onclick="aggiungiAllaLista('${ingrediente.nome}')">Aggiungi alla lista della spesa</button>
             `;
             risultati.appendChild(li);
         });

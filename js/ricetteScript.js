@@ -29,7 +29,7 @@ async function cercaRicette() {
             let li = document.createElement('li');
             li.innerHTML = `
                 <div style="display: flex; align-items: center;">
-                    <img src="${ricetta.urlImmagine}" alt="${ricetta.nome}" style="width: 50px; height: 50px;">
+                    <img src="${ricetta.urlImmagine}" alt="${ricetta.nome}" style="width: 90px; height: 90px;">
                     <div style="flex-grow: 1; margin-left: 15px;">
                         <strong>${ricetta.nome}</strong><br>
                     </div>

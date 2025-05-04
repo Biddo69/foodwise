@@ -39,12 +39,12 @@ require_once("../includes/conn.php");
     <label>Sesso biologico:</label>
     <div class="radio-group">
       <span class="radio-option">
-        <input type="radio" id="male" name="sesso" value="M" required>
         <label for="male">Maschio</label>
+        <input type="radio" id="male" name="sesso" value="M" required>
       </span>
       <span class="radio-option">
-        <input type="radio" id="female" name="sesso" value="F" required>
         <label for="female">Femmina</label>
+        <input type="radio" id="female" name="sesso" value="F" required>
       </span>
     </div>
     

@@ -8,7 +8,7 @@
     // Recupera il parametro 'parametro' dalla query string
     $query = isset($_GET['parametro']) ? urlencode($_GET['parametro']) : '';
     $numEl = 5;
-    $apiKey = '2014d19b1b2f4a5bb63e28976081687d';
+    $apiKey = '0072b1f00e0c42dbbd1757f463c8d8c9';
 
     // Controlla se il parametro 'parametro' è vuoto
     if (empty($query)) {

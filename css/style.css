@@ -31,7 +31,7 @@ a:hover {
 .header img {
     display: block; /* Rimuove eventuali spazi extra */
     margin: 0 auto; /* Centra l'immagine orizzontalmente */
-    max-width: 300px; /* Limita la larghezza massima del logo */
+    max-width: 200px; /* Limita la larghezza massima del logo */
     height: auto; /* Mantiene le proporzioni */
 }
 
@@ -319,7 +319,7 @@ footer {
     text-decoration: underline;
 }
 
-/* Stile per gli elementi della lista */
+/* Stile per ogni elemento della lista */
 .lista-item {
     display: flex;
     align-items: center;
@@ -330,14 +330,26 @@ footer {
     border-radius: 5px;
     background-color: #333; /* Sfondo scuro */
     color: #f5f5f5; /* Testo chiaro */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Aggiungi un'ombra */
+}
+.lista-contenitore {
+    display: flex;
+    align-items: center;
+    width: 100%;
 }
 
 /* Stile per l'immagine */
 .lista-img {
     border-radius: 5px;
     margin-right: 15px;
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
+}
+/* Contenitore per i dettagli */
+.lista-dettagli {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
 }
 
 /* Stile per le informazioni */
@@ -362,22 +374,9 @@ footer {
     background-color: #3e8e41; /* Verde scuro per hover */
 }
 
-/* Contenitore principale per ogni elemento della lista */
-.lista-contenitore {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-}
-
-/* Sezione dei dettagli della ricetta */
-.lista-dettagli {
-    display: flex;
-    align-items: center;
-}
-
-/* Sezione delle azioni (pulsanti) */
-.lista-azioni {
-    display: flex;
-    gap: 10px; /* Spaziatura tra i pulsanti */
+#preferiti {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px auto;
+    max-width: 800px;
 }

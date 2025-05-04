@@ -32,15 +32,11 @@ async function generaLista() {
             li.classList.add('lista-item'); // Aggiungi una classe per lo stile
 
             li.innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                    <div style="display: flex; align-items: center;">
-                        <img src="${ingrediente.urlImmagine}" alt="${ingrediente.nome}" class="lista-img">
-                        <div class="lista-info">
-                            <strong>${ingrediente.nome}</strong><br>
-                        </div>
-                    </div>
-                    <button class="lista-btn" onclick="rimuoviDallaLista('${ingrediente.nome}')">Rimuovi</button>
+                <img src="${ingrediente.urlImmagine}" alt="${ingrediente.nome}" class="lista-img">
+                <div class="lista-info">
+                    <strong>${ingrediente.nome}</strong>
                 </div>
+                <button class="lista-btn" onclick="rimuoviDallaLista('${ingrediente.nome}')">Rimuovi</button>
             `;
             listaContainer.appendChild(li);
         });

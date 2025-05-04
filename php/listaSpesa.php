@@ -1,5 +1,4 @@
 <?php
-
     session_start();
     require_once("../includes/conn.php");
     require_once("../includes/header.php");
@@ -15,10 +14,12 @@
         });
     </script>
 
-    <h1>La tua lista della spesa</h1>
+    <div class="lista-container">
+        <h1>La tua lista della spesa</h1>
 
-    <!-- Contenitore per la lista della spesa -->
-    <ul id="listaSpesa"></ul>
+        <!-- Contenitore per la lista della spesa -->
+        <ul id="listaSpesa" class="lista-spesa"></ul>
+    </div>
 
 <?php
     require_once("../includes/footer.php");

@@ -8,7 +8,7 @@ error_reporting(E_ALL);
 
 // Recupera il parametro 'nome' dalla query string
 $query = isset($_GET['nome']) ? $_GET['nome'] : '';
-$apiKey = '2014d19b1b2f4a5bb63e28976081687d';
+$apiKey = '0072b1f00e0c42dbbd1757f463c8d8c9';
 
 // Controlla se il parametro 'nome' è vuoto
 if (empty($query)) {

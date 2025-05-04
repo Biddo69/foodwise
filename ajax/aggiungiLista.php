@@ -15,7 +15,7 @@ if (isset($_GET['nome'])) {
     $nomeIngrediente = htmlspecialchars($_GET['nome']);
 
     // Chiave API di Spoonacular
-    $apiKey = '2014d19b1b2f4a5bb63e28976081687d';
+    $apiKey = '0072b1f00e0c42dbbd1757f463c8d8c9';
 
     // URL per ottenere i dettagli dell'ingrediente
     $url = "https://api.spoonacular.com/food/ingredients/search?query=" . urlencode($nomeIngrediente) . "&apiKey=" . $apiKey;

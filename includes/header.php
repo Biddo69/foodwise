@@ -25,6 +25,7 @@
         <a href="listaSpesa.php">Lista Spesa</a>
         <a href="ricette.php">Ricette</a>
         <a href="ricettePreferite.php">Preferiti</a>
+        <a href="pianoCalorico.php">Piano Calorico</a>
         <a href="logout.php" class="logout">Logout</a>
       </nav>
       <!-- Contenuto principale della pagina; qui viene inserito il markup specifico di ogni sezione -->

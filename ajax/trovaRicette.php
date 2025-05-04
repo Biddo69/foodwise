@@ -5,7 +5,7 @@
     // Recupera il parametro 'q' dalla query string
     $query = isset($_GET['parametro']) ? urlencode($_GET['parametro']) : '';
     $numEl = 5;
-    $apiKey = '2014d19b1b2f4a5bb63e28976081687d';
+    $apiKey = '0072b1f00e0c42dbbd1757f463c8d8c9';
 
     // Controlla se il parametro 'q' è vuoto
     if (empty($query)) {
@@ -40,7 +40,11 @@
                 'urlImmagine' => $item['image'] ?? 'Immagine non disponibile',
             ];
         }, $data['results']);
-        
+
+        if (empty($results)) {
+            throw new Exception("Nessuna ricetta trovata.");
+        }
+            
         // Restituisci i risultati come JSON
         echo json_encode($results);
     } catch (Exception $e) {
