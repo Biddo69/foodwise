@@ -7,6 +7,11 @@
 
     require_once("../includes/conn.php");
 
+    if (!isset($_SESSION['userData']['id'])) {
+        echo json_encode(['error' => 'Utente non autenticato.']);
+        exit;
+    }
+
     // Controlla se l'utente è autenticato
     if (!isset($_SESSION['userData']['id'])) {
         echo json_encode(['error' => 'Utente non autenticato.']);

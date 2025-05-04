@@ -3,16 +3,18 @@
     session_start();
     require_once("../includes/conn.php");
 
-    // Controlla se l'utente è autenticato
     if (!isset($_SESSION['userData']['id'])) {
         echo json_encode(['error' => 'Utente non autenticato.']);
         exit;
     }
 
-    // Recupera l'ID dell'utente dalla sessione
+    if (!isset($_SESSION['userData']['id'])) {
+        echo json_encode(['error' => 'Utente non autenticato.']);
+        exit;
+    }
+
     $userId = $_SESSION['userData']['id'];
 
-    // Controlla se il parametro 'nome' è stato passato
     if (!isset($_GET['nome']) || empty($_GET['nome'])) {
         echo json_encode(['error' => "Parametro 'nome' mancante o vuoto."]);
         exit;

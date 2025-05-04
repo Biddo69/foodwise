@@ -4,22 +4,26 @@
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
+
     require_once("../includes/conn.php");
 
-    // Controlla se l'utente è autenticato
     if (!isset($_SESSION['userData']['id'])) {
         echo json_encode(['error' => 'Utente non autenticato.']);
         exit;
     }
 
-    // Controlla se il nome della ricetta è stato passato
+    if (!isset($_SESSION['userData']['id'])) {
+        echo json_encode(['error' => 'Utente non autenticato.']);
+        exit;
+    }
+
     if (!isset($_GET['nome']) || empty($_GET['nome'])) {
         echo json_encode(['error' => "Nome ricetta mancante."]);
         exit;
     }
 
     $userId = $_SESSION['userData']['id'];
-    $nomeRicetta = htmlspecialchars($_GET['nome']); // Sanifica l'input
+    $nomeRicetta = htmlspecialchars($_GET['nome']);
 
     try {
         // Query per ottenere l'ID della ricetta in base al nome
@@ -43,7 +47,6 @@
         $stmt->bind_param("ii", $userId, $idRicetta);
         $stmt->execute();
 
-        // Controlla se la rimozione è avvenuta con successo
         if ($stmt->affected_rows > 0) {
             echo json_encode(['success' => true, 'message' => "Ricetta rimossa dai preferiti con successo."]);
         } else {

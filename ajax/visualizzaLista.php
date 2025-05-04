@@ -4,9 +4,8 @@
     require_once("../includes/conn.php");
     require_once("../includes/header.php");
 
-    // Controlla se l'utente è autenticato
-    if (!isset($_SESSION["autenticato"]) || $_SESSION["autenticato"] != true) {
-        header("Location: login.php?messaggio=Devi effettuare il login per accedere a questa pagina.");
+    if (!isset($_SESSION['userData']['id'])) {
+        echo json_encode(['error' => 'Utente non autenticato.']);
         exit;
     }
 

@@ -1,90 +1,86 @@
 <?php
-session_start();
-require_once("../includes/conn.php");
+    session_start();
+    require_once("../includes/conn.php");
 
-try {
-    $email = $_GET["email"] ?? null;
-    $passmd5 = md5($_GET["password"] ?? null);
 
-    // Validazione dei dati
-    if (!$email || !$passmd5) {
-        echo json_encode([
-            "status" => "ERR",
-            "msg" => "Tutti i campi sono obbligatori."
-        ]);
-        die();
-    }
+    try {
+        //?? fai i controlli isset e empty, restituendo null nel caso non siano stati passati, molto figo
+        $email = $_GET["email"] ?? null;
+        $passmd5 = md5($_GET["password"] ?? null);
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode([
-            "status" => "ERR",
-            "msg" => "L'indirizzo email non è valido."
-        ]);
-        die();
-    }
-
-    $query = "SELECT * FROM utente WHERE email = ? AND passmd5 = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("ss", $email, $passmd5);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $userData = $result->fetch_assoc();
-
-        $peso = $userData["peso"]; // Peso in kg
-        $altezza = $userData["altezza"]; // Altezza in cm
-        $dataNascita = $userData["dataNascita"]; // Data di nascita in formato YYYY-MM-DD
-        $sesso = $userData["sesso"]; // "M" per uomo, "F" per donna
-
-        // Calcola l'età a partire dalla data di nascita
-        $dataCorrente = new DateTime();
-        $dataNascitaObj = new DateTime($dataNascita);
-        $eta = $dataCorrente->diff($dataNascitaObj)->y; // Calcola la differenza in anni
-
-        // Calcolo delle calorie giornaliere (BMR)
-        if ($sesso === "M") {
-            $bmr = 10 * $peso + 6.25 * $altezza - 5 * $eta + 5; // Formula per uomini
-        } elseif ($sesso === "F") {
-            $bmr = 10 * $peso + 6.25 * $altezza - 5 * $eta - 161; // Formula per donne
-        } else {
-            $bmr = null; // Caso in cui il sesso non sia specificato
+        // qui controllo se il risultato del ?? è null o meno
+        if (!$email || !$passmd5) {
+            echo json_encode([
+                "status" => "ERR",
+                "msg" => "Tutti i campi sono obbligatori."
+            ]);
+            die();
         }
 
-        // Aggiungi il BMR e l'età a userData
-        $userData["calorie_giornaliere"] = $bmr;
-        $userData["eta"] = $eta;
+        //la funzione filter fa quello che farebbero le regex, tipo, controlla se c'è il punto, la chiacciola e il resto
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo json_encode([
+                "status" => "ERR",
+                "msg" => "L'indirizzo email non è valido."
+            ]);
+            die();
+        }
 
-        // Salva i dati nella sessione
-        $_SESSION["userData"] = $userData;
-        $_SESSION["autenticato"] = true;
+        //query per controllare se l'email e la password esistono nel database
+        $query = "SELECT * FROM utente WHERE email = ? AND passmd5 = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ss", $email, $passmd5);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-        echo json_encode([
-            "status" => "OK",
-            "msg" => "Accesso completato con successo.",
-            "calorie_giornaliere" => $bmr,
-            "eta" => $eta
-        ]);
-        die();
-    } else {
+        //se result->num_rows > 0, significa che è stata trovata una riga
+        if ($result->num_rows > 0) {
+            $userData = $result->fetch_assoc();
+
+            //quando l'utente mi fa l'accesso mi calcolo il bmr con la formula di 
+            $peso = $userData["peso"]; 
+            $altezza = $userData["altezza"];
+            $dataNascita = $userData["dataNascita"]; 
+            $sesso = $userData["sesso"];
+
+            // Calcola l'età a partire dalla data di nascita
+            $dataCorrente = new DateTime();
+            $dataNascitaObj = new DateTime($dataNascita);
+            $eta = $dataCorrente->diff($dataNascitaObj)->y; // Calcola la differenza in anni
+
+            
+            if ($sesso === "M") {
+                $bmr = 10 * $peso + 6.25 * $altezza - 5 * $eta + 5; // Formula per uomini
+            } elseif ($sesso === "F") {
+                $bmr = 10 * $peso + 6.25 * $altezza - 5 * $eta - 161; // Formula per donne
+            }
+
+            // mi salvo anche l'età e il bmr
+            $userData["calorie_giornaliere"] = $bmr;
+            $userData["eta"] = $eta;
+
+            // Salva i dati nella sessione che poi verrà svuotata con la logout
+            $_SESSION["userData"] = $userData;
+            $_SESSION["autenticato"] = true;
+
+            echo json_encode([
+                "status" => "OK",
+                "msg" => "Accesso completato con successo.",
+                "calorie_giornaliere" => $bmr,
+                "eta" => $eta
+            ]);
+            die();
+        } else {
+            echo json_encode([
+                "status" => "ERR",
+                "msg" => "Credenziali non valide."
+            ]);
+            die();
+        }
+    } catch (Exception $e) {
         echo json_encode([
             "status" => "ERR",
-            "msg" => "Credenziali non valide."
+            "msg" => "Si è verificato un errore: " . $e->getMessage()
         ]);
-        die();
-    }
-} catch (Exception $e) {
-    echo json_encode([
-        "status" => "ERR",
-        "msg" => "Si è verificato un errore: " . $e->getMessage()
-    ]);
-} finally {
-    // Chiusura delle risorse
-    if (isset($stmt) && $stmt !== false) {
-        $stmt->close();
-    }
-    if (isset($conn) && $conn !== false) {
-        $conn->close();
-    }
-}
+    } 
 ?>

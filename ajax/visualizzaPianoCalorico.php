@@ -7,6 +7,11 @@
 
     require_once("../includes/conn.php");
 
+    if (!isset($_SESSION['userData']['id'])) {
+        echo json_encode(['error' => 'Utente non autenticato.']);
+        exit;
+    }
+
     // Controlla se l'utente è autenticato
     if (!isset($_SESSION['userData']['id'])) {
         echo json_encode(['error' => "Utente non autenticato."]);
@@ -14,7 +19,7 @@
     }
 
     $idUtente = $_SESSION['userData']['id'];
-    $bmr = $_SESSION['userData']['calorie_giornaliere'] ?? null; // Recupera il BMR dalla sessione
+    $bmr = $_SESSION['userData']['calorie_giornaliere'] ?? null;
 
     try {  
         // Query per recuperare i dati del piano calorico ordinati per data decrescente
@@ -24,7 +29,6 @@
         $stmt->execute();
         $result = $stmt->get_result();
 
-        // Controlla se ci sono risultati
         if ($result->num_rows > 0) {
             $pianiCalorici = [];
 
@@ -45,12 +49,10 @@
             ]);
         }
 
-        // Chiudi la connessione
         $stmt->close();
         $conn->close();
 
     } catch (Exception $e) {
-        // Gestione degli errori
         echo json_encode(['error' => $e->getMessage()]);
     }
 

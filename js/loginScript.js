@@ -2,6 +2,7 @@ async function verificaCredenziali() {
     let email = document.querySelector('input[name="email"]').value;
     let password = document.querySelector('input[name="password"]').value;
 
+    //mando le credeziali alla pagina AJAX
     let url = "../ajax/gestoreLogin.php?email=" + email + "&password=" + password;
     let response = await fetch(url);
 

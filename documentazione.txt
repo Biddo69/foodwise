@@ -1,0 +1,44 @@
+---------INDEX.PHP---------
+
+Il programma inizia dalla pagina index.php, che reindirizza direttamente alla pagina login.php
+
+---------LOGIN.PHP---------
+
+Qui l'utente può inserire la mail e la password con cui si è registrato.
+L'html richiama la funzione verificaCredenziali che si trova in loginScript.js, che controlla le credenziali e invia la richiesta alla pagina AJAX gestoreLogin.php passando le credenziali.
+La pagina AJAX controlla le credenziali
+
+---------REGISTRA.PHP---------
+
+Vengono chiesti all'utente tutti i parametri necessari per accedere tra cui il peso, l'altezza, la data di nascita e il sesso (solo maschio e femmina se no si sminchiano le formule) per calcolare il peso ideale e il bmr.
+Lo script prende tutte le credenziali
+
+---------INGREDIENTI.PHP---------
+Questa pagina visualizza gli ingredienti tramite la barra di ricerca. Ne visualizza 5 alla volta.
+Lo scrip ingredienti contiene soltanto il codice per generare la lista, quindi si potrebbe incorporare allo script per la lista che contiene gli altri comandi per l'ingredienti
+Comunque, lo script richiama la funzione trovaIngredienti, che fa la richiesta all'api passando il parametro di ricerca.
+Gli ingredienti vengono generati con un bottone per aggiungerli alla lista della spese
+
+---------LISTASPESA.PHP--------- 
+La lista spesa funziona praticamente come la pagina ingrediente, soltanto che la ricerca degli ingredienti non li fa con la API ma con il database, infatti quando un utente salva un ingrediente nella lista viene anche salvato nel DB, er evitare di sprecare gli utilizzi gratis dell'api.
+L'ingrediente può poi essere rimosso dalla lista, ma non dal DB.
+
+---------RICETTE.PHP---------
+La pagina ricette come quella degli ingredienti ma con due bellissimi pulsanti in più, uno per visualizzare i dettagli della ricetta e uno per consumarla.
+Cliccando il bottone dei dettagli si verrà reindirizzati ad un'altra pagina per visualizzare i dettagli come le porzioni, i valori nutrizionali, la descrizione della ricetta e gli ingredienti che potranno essere aggiunti direttamente da li.
+Il bottone consuma invece apre un pop up che chiede quante porzioni si vogliono consumare, dopodiché viene fatta la proporizione per i valori e aggiunti al DB per il piano calorico
+
+---------PIANOCALORICO.PHP---------
+Questa pagina visualizza tutti gli intake di ogni giorno.
+Quante calorie, sodio, proteine e il resto sono stati consumati e in quale giorno.
+
+
+
+Ammetto che la gestione della lista della spesa nel DB non è delle migliori
+
+
+
+
+
+
+

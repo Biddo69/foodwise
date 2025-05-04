@@ -2,11 +2,8 @@
     session_start();
     require_once("../includes/conn.php");
 
-    //il try catch mi serve più che altro per la clausola finally, che chiude le connessioni e le risorse
-    //se non ci sono errori, il finally viene eseguito comunque 
     try {
 
-        //l'operatore ?? fa il controllo !isset e empty, se esiste il valore lo assegna altrimenti ritorna null
         $username = $_GET["username"] ?? null;
         $email = $_GET["email"] ?? null;
         $passmd5 = md5($_GET["password"] ?? null);
@@ -15,7 +12,7 @@
         $altezza = $_GET["altezza"] ?? null;
         $sesso = $_GET["sesso"] ?? null;
 
-        // Validazione dei dati
+
         if (!$username || !$email || !$dataNascita || !$peso || !$altezza || !$sesso) {
             echo json_encode([
                 "status" => "ERR",
@@ -24,8 +21,6 @@
             die();
         }
 
-        // la funzione filter var praticamente semplifica i controlli Regex usando dei filtri preimpostati...
-        //in questo caso uso quello per le email, che controlla 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             echo json_encode([
                 "status" => "ERR",
@@ -39,8 +34,9 @@
         $stmt = $conn->prepare($query);
         $stmt->bind_param("ss", $username, $email);
         $stmt->execute();
+        $result = $stmt->get_result();
 
-        if ($stmt->num_rows > 0) {
+        if ($result->num_rows > 0) {
             echo json_encode([
                 "status" => "ERR",
                 "msg" => "L'username o l'email sono già in uso."
@@ -54,14 +50,13 @@
         // strtotime() converte una data in timestamp, che rappresenta il numero di secondi trascorsi dal 1 gennaio 1970
         $dataNascitaTimestamp = strtotime($dataNascita);
 
-        //calcolo l'età dell'utente usando il formato in anni, ma non tiene conto se il mese è gia passato...
-        $eta = date("Y") - date("Y", $dataNascitaTimestamp);
-        //controllo quindi se il mese e il giorno della nascita sono minori rispetto a quelli attuali, quindi tolgo un anno
-        if (date("md", $dataNascitaTimestamp) > date("md")) {
-            $eta--;
-        }
 
-        //controllo se l'eta è minore di 12 anni, che mi toglie i controlli per la data futura non valida
+        // Calcola l'età a partire dalla data di nascita, che in realtà mi serve solo per calcolare il peso ideal 
+        $dataCorrente = new DateTime();
+        $dataNascitaObj = new DateTime($dataNascita);
+        $eta = $dataCorrente->diff($dataNascitaObj)->y;
+
+        // Controllo se l'età è valida
         if ($eta < 12 || $eta > 120) {
             echo json_encode([
                 "status" => "ERR",
@@ -88,7 +83,7 @@
             die();
         }
 
-        // Calcolo il peso ideal utilizzando la formula di Lorenz
+        // Calcolo il peso ideale utilizzando la formula di Lorenz
         if ($sesso == "M") {
             $pesoGoal = $altezza - 100 - (($altezza - 150) / 4);
         } 
@@ -96,6 +91,7 @@
             $pesoGoal = $altezza - 100 - (($altezza - 150) / 2.5);
         }
 
+        //dopo tutti i controlli faccio la query per inserire i dati nel database
         $query = "INSERT INTO utente (username, email, passmd5, dataNascita, peso, altezza, sesso, pesoGoal) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("ssssdisd", $username, $email, $passmd5, $dataNascita, $peso, $altezza, $sesso, $pesoGoal);
@@ -121,14 +117,4 @@
             "msg" => "Si è verificato un errore: " . $e->getMessage()
         ]);
     } 
-    
-    finally {
-        // Chiusura delle risorse
-        if (isset($stmt) && $stmt !== false) {
-            $stmt->close();
-        }
-        if (isset($conn) && $conn !== false) {
-            $conn->close();
-        }
-    }
 ?>
