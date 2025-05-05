@@ -18,7 +18,7 @@
     $nomeRicetta = htmlspecialchars($_GET['nome']); // Sanifica l'input
 
     try {
-        $urlDettagli = "http://localhost/5C/progetto/foodwise/foodwise/ajax/ottieniDettagliRicetta.php?nome=" . urlencode($nomeRicetta);
+        $urlDettagli = "http://localhost/5C/progetto/foodwise/ajax/ottieniDettagliRicetta.php?nome=" . urlencode($nomeRicetta);
         $responseDettagli = file_get_contents($urlDettagli);
 
         if ($responseDettagli === false) {
