@@ -11,7 +11,7 @@
     <script src="../js/ingredientiScript.js"></script>
     <script src="../js/listaScript.js"></script>
     <h1>Ricerca un ingrediente</h1>
-
+    <div id="messaggio" class="messaggio"></div>
     <div class="search-container">
         <!-- on key down mi permette di inviare la ricerca anche premendo invio -->
         <input type="text" id="parametro" placeholder="Es. butter" onkeydown="if (event.key == 'Enter') cercaIngredienti()">

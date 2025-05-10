@@ -16,7 +16,7 @@
 
     <div class="lista-container">
         <h1>La tua lista della spesa</h1>
-
+        <div id="messaggio" class="messaggio"></div>
         <!-- Contenitore per la lista della spesa -->
         <ul id="listaSpesa" class="lista-spesa"></ul>
     </div>

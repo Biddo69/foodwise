@@ -1,6 +1,7 @@
 async function visualizzaPianoCalorico() {
     const url = "../ajax/visualizzaPianoCalorico.php";
-
+    let divMessaggio = document.getElementById("messaggio");
+    divMessaggio.innerHTML = ""; 
     try {
         // Effettua la chiamata AJAX
         const response = await fetch(url);
@@ -15,7 +16,7 @@ async function visualizzaPianoCalorico() {
 
         // Controlla se la risposta contiene un errore
         if (!dati.success) {
-            alert(dati.message || "Errore durante il recupero del piano calorico.");
+            divMessaggio.innerHTML = `<p class='errore'>${dati.message}</p>`; // Mostra l'errore all'utente
             return;
         }
 
@@ -48,6 +49,3 @@ async function visualizzaPianoCalorico() {
         alert("Si è verificato un errore durante il recupero del piano calorico.");
     }
 }
-
-// Chiama la funzione quando la pagina è caricata
-document.addEventListener("DOMContentLoaded", visualizzaPianoCalorico);

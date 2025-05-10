@@ -10,7 +10,8 @@
 ?>
     <script src="../js/ricetteScript.js"></script>
     <h1>Ricerca una ricetta</h1>
-
+    <div id="messaggio" class="messaggio"></div>
+    
     <div class="search-container">
         <input type="text" id="parametro" placeholder="Es. carbonara" onkeydown="if (event.key == 'Enter') cercaRicette()">
         <input type="image" src="../img/cerca.png" width="20" height="20" onclick="cercaRicette()">

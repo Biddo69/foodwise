@@ -296,8 +296,14 @@ footer {
 #dettagliRicetta a:hover {
     text-decoration: underline;
 }
-.messaggio {
+.errore {
     color: #ff4d4d; /* Rosso per errori o messaggi */
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+.successo {
+    color: #3e8e41; /* Rosso per errori o messaggi */
     text-align: center;
     margin-bottom: 20px;
     font-size: 1.1rem;
@@ -379,4 +385,38 @@ footer {
     padding: 0;
     margin: 20px auto;
     max-width: 800px;
+}
+
+/* Stile per il contenitore del piano calorico */
+.piano-calorico-contenitore {
+    max-width: 600px; /* Riduci la larghezza massima */
+    margin: 20px auto; /* Centra il contenitore */
+    padding: 20px;
+    background-color: #2c2c2c; /* Sfondo scuro */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Aggiungi un'ombra */
+    color: #f5f5f5; /* Testo chiaro */
+}
+
+/* Stile per ogni elemento del piano calorico */
+.piano-calorico-contenitore .lista-item {
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #444; /* Bordo scuro */
+    border-radius: 8px;
+    background-color: #333; /* Sfondo scuro */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Aggiungi un'ombra leggera */
+}
+
+/* Stile per le informazioni */
+.piano-calorico-contenitore .lista-info h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #4CAF50; /* Verde principale */
+}
+
+.piano-calorico-contenitore .lista-info p {
+    font-size: 0.9rem;
+    margin: 5px 0;
+    line-height: 1.4;
 }

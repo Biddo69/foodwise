@@ -1,7 +1,9 @@
 
 async function generaLista() {
     let url = "../ajax/trovaIngredientiInDB.php";
-
+    let divMessaggio = document.getElementById("messaggio");
+    divMessaggio.innerHTML = ""; // Svuota la lista precedente
+    
     try {
         let response = await fetch(url);
         if (!response.ok) {
@@ -13,13 +15,13 @@ async function generaLista() {
 
         // Controlla se il backend ha restituito un errore
         if (datiRicevuti.error) {
-            alert(datiRicevuti.error); // Mostra l'errore all'utente
+            divMessaggio.innerHTML = `<p class='errore'>Errore: ${datiRicevuti.error}</p>`;
             return;
         }
 
         // Se non ci sono ingredienti, mostra un messaggio
-        if (datiRicevuti.length === 0) {
-            alert("Nessun ingrediente trovato nella lista della spesa.");
+        if (datiRicevuti.length == 0) {
+            divMessaggio.innerHTML = "<p class='errore'>Non hai ingredienti nella lista della spesa.</p>";
             return;
         }
 
@@ -49,7 +51,9 @@ async function generaLista() {
 
 async function aggiungiAllaLista(nomeIngrediente) {
     let url = `../ajax/aggiungiLista.php?nome=${encodeURIComponent(nomeIngrediente)}`;
-    
+    let divMessaggio = document.getElementById("messaggio");
+    divMessaggio.innerHTML = ""; // Svuota la lista precedente
+
     try {
         let response = await fetch(url);
         if (!response.ok) {
@@ -61,9 +65,9 @@ async function aggiungiAllaLista(nomeIngrediente) {
 
         // Controlla se l'operazione è andata a buon fine
         if (datiRicevuti.success) {
-            alert(datiRicevuti.message); // Mostra il messaggio di successo
+            divMessaggio.innerHTML = `<p class='successo'>${datiRicevuti.message}</p>`;
         } else {
-            alert(`Errore: ${datiRicevuti.message}`); // Mostra il messaggio di errore
+            divMessaggio.innerHTML = `<p class='errore'>Errore: ${datiRicevuti.message}</p>`;
         }
     } catch (error) {
         console.error("Errore:", error);
@@ -74,7 +78,8 @@ async function aggiungiAllaLista(nomeIngrediente) {
 // Funzione per rimuovere un ingrediente dalla lista della spesa
 async function rimuoviDallaLista(nomeIngrediente) {
     let url = `../ajax/rimuoviLista.php?nome=${encodeURIComponent(nomeIngrediente)}`;
-    
+    let divMessaggio = document.getElementById("messaggio");
+    divMessaggio.innerHTML = ""; // Svuota la lista precedente
     try {
         let response = await fetch(url);
         if (!response.ok) {
@@ -86,10 +91,10 @@ async function rimuoviDallaLista(nomeIngrediente) {
 
         // Controlla se l'operazione è andata a buon fine
         if (datiRicevuti.success) {
-            alert(datiRicevuti.message); // Mostra il messaggio di successo
+            divMessaggio.innerHTML = `<p class='successo'>${datiRicevuti.message}</p>`;
             generaLista(); // Aggiorna la lista dopo la rimozione
         } else {
-            alert(`Errore: ${datiRicevuti.message}`); // Mostra il messaggio di errore
+            divMessaggio.innerHTML = `<p class='errore'>Errore: ${datiRicevuti.message}</p>`;
         }
     } catch (error) {
         console.error("Errore:", error);

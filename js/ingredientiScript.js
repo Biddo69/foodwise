@@ -1,7 +1,10 @@
 async function cercaIngredienti() {
     let parametro = document.getElementById('parametro').value.trim();
+    let divMessaggio = document.getElementById("messaggio")
+    divMessaggio.innerHTML = "";
+    
     if (!parametro) {
-        alert("Inserisci un ingrediente da cercare.");
+        divMessaggio.innerHTML = "<p class='errore'>Inserisci un ingrediente da cercare</p>";
         return;
     }
 
@@ -38,6 +41,6 @@ async function cercaIngredienti() {
         });
     } catch (error) {
         console.error("Errore:", error);
-        alert("Si è verificato un errore durante la ricerca degli ingredienti.");
+        divMessaggio.innerHTML = "<p class='errore'>Si è verificato un errore durante la ricerca degli ingredienti.</p>";
     }
 }

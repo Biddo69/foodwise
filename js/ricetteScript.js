@@ -1,7 +1,9 @@
 async function cercaRicette() {
     let parametro = document.getElementById('parametro').value.trim();
+    let divMessaggio = document.getElementById("messaggio")
+    divMessaggio.innerHTML = "";
     if (!parametro) {
-        document.getElementById("preferiti").innerHTML = "<li class='messaggio'>Inserisci una ricetta.</li>";  
+        divMessaggio.innerHTML = "<p class='errore'>Inserisci una ricetta da cercare</p>";
         return;
     }
 
@@ -18,7 +20,7 @@ async function cercaRicette() {
 
         // Controlla se il backend ha restituito un errore
         if (datiRicevuti.error) {
-            alert(datiRicevuti.error); // Mostra l'errore all'utente
+            divMessaggio.innerHTML = `<p class='errore'>${datiRicevuti.error}</p>`;
             return;
         }
 
@@ -74,7 +76,6 @@ async function dettagliRicetta(nomeRicetta) {
             );
 
             // Controlla se gli ingredienti sono presenti
-            // Controlla se gli ingredienti sono presenti
             if (!ricetta.ingredients || ricetta.ingredients.length === 0) {
                 console.warn("Nessun ingrediente trovato per questa ricetta.");
                 ricetta.ingredients = ["Ingredienti non disponibili"];
@@ -89,6 +90,7 @@ async function dettagliRicetta(nomeRicetta) {
                 <p><strong>Porzioni:</strong> ${ricetta.servings}</p>
                 <p><strong>Riassunto:</strong> ${ricetta.summary}</p>
                 <h3>Ingredienti:</h3>
+                <div id="messaggio" class="messaggio"></div>
                 <ul id="ingredienti-list"></ul>
                 <h3>Valori Nutrizionali:</h3>
                 <ul id="nutrienti-list"></ul>
@@ -118,7 +120,8 @@ async function dettagliRicetta(nomeRicetta) {
 
 async function aggiungiAiPreferiti(nomeRicetta) {
     let url = `../ajax/aggiungiPreferiti.php?nome=${encodeURIComponent(nomeRicetta)}`;
-    
+    let divMessaggio = document.getElementById("messaggio")
+    divMessaggio.innerHTML = "";
     try {
         let response = await fetch(url);
         if (!response.ok) {
@@ -128,9 +131,9 @@ async function aggiungiAiPreferiti(nomeRicetta) {
         let datiRicevuti = await response.json();
 
         if (datiRicevuti.success) {
-            alert(datiRicevuti.message); // Mostra il messaggio di successo
+            divMessaggio.innerHTML = `<p class='successo'>${datiRicevuti.message}</p>`;
         } else {
-            alert(`Errore: ${datiRicevuti.message}`); // Mostra il messaggio di errore
+            divMessaggio.innerHTML = `<p class='errore'>${datiRicevuti.message}</p>`;
         }
     } catch (error) {
         console.error("Errore:", error);
@@ -139,7 +142,6 @@ async function aggiungiAiPreferiti(nomeRicetta) {
 }
 
 async function visualizzaPreferiti() {
-    
     let url = "../ajax/visualizzaPreferiti.php";
 
     try {
@@ -188,7 +190,8 @@ async function visualizzaPreferiti() {
 
 async function rimuoviDaiPreferiti(nomeRicetta) {
     let url =`../ajax/rimuoviPreferiti.php?nome=${encodeURIComponent(nomeRicetta)}`;
-
+    let divMessaggio = document.getElementById("messaggio")
+    divMessaggio.innerHTML = "";
     try {
         let response = await fetch(url);
         if (!response.ok) {
@@ -198,10 +201,9 @@ async function rimuoviDaiPreferiti(nomeRicetta) {
         let datiRicevuti = await response.json();
 
         if (datiRicevuti.success) {
-            alert(datiRicevuti.message);
             visualizzaPreferiti(); // Aggiorna la lista dopo la rimozione
         } else {
-            alert(datiRicevuti.error || "Errore durante la rimozione.");
+            divMessaggio.innerHTML = `<p class='errore'>${datiRicevuti.message}</p>`; // Mostra l'errore all'utente
         }
     } catch (error) {
         console.error("Errore:", error);
@@ -210,10 +212,12 @@ async function rimuoviDaiPreferiti(nomeRicetta) {
 }
 
 async function consumaRicetta(nomeRicetta) {
+    let divMessaggio = document.getElementById("messaggio")
+    divMessaggio.innerHTML = "";
     let porzioni = prompt("Quante porzioni hai consumato?", "1");
     
     if (!porzioni || isNaN(porzioni) || porzioni <= 0) {
-        alert("Inserisci un numero valido di porzioni.");
+        divMessaggio.innerHTML = "<p class='errore'>Inserisci un numero valido di porzioni.</p>";
         return;
     }
 
@@ -228,9 +232,9 @@ async function consumaRicetta(nomeRicetta) {
         let datiRicevuti = await response.json();
 
         if (datiRicevuti.success) {
-            alert(datiRicevuti.message); // Mostra il messaggio di successo
+            divMessaggio.innerHTML = `<p class='successo'>${datiRicevuti.message}</p>`; // Mostra il messaggio di successo
         } else {
-            alert(`Errore: ${datiRicevuti.message}`); // Mostra il messaggio di errore
+            divMessaggio.innerHTML = `<p class='errore'>Errore: ${datiRicevuti.message}</p>`;
         }
     } catch (error) {
         console.error("Errore:", error);

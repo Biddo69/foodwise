@@ -18,7 +18,7 @@
     <div class="header">
         <img src="../img/logo.png" alt="FoodWise Logo">
     </div>
-
+    <div id="messaggio" class="messaggio"></div>
     <div class="container">
         <h2>Accedi</h2>
         

@@ -11,6 +11,7 @@
     }
 ?>
     <script src="../js/ricetteScript.js"></script> <!-- Carica il file ricetteScript.js -->
+    <div id="messaggio" class="messaggio"></div>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             visualizzaPreferiti(); // Chiamata automatica alla funzione per generare la lista
