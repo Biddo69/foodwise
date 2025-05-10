@@ -1,21 +1,37 @@
 <?php
+session_start();
+require_once("../includes/conn.php");
+require_once("../DB/DBIngredienti.php");
 
-    session_start();
-    require_once("../includes/conn.php");
-    require_once("../includes/header.php");
+if (!isset($_SESSION['userData']['id'])) {
+    echo json_encode(['error' => 'Utente non autenticato.']);
+    exit;
+}
 
-    if (!isset($_SESSION['userData']['id'])) {
-        echo json_encode(['error' => 'Utente non autenticato.']);
-        exit;
+$userId = $_SESSION['userData']['id'];
+
+try {
+    $dbIngredienti = new DBIngredienti($conn);
+
+    // Recupera gli elementi della lista della spesa
+    $result = $dbIngredienti->visualizzaListaSpesa($userId);
+
+    // Controlla se ci sono risultati
+    if ($result->num_rows > 0) {
+        $listaSpesa = [];
+        while ($row = $result->fetch_assoc()) {
+            $listaSpesa[] = [
+                'idLista' => $row['idLista'],
+                'idIngrediente' => $row['idIngrediente'],
+                'nomeIngrediente' => $row['nomeIngrediente'],
+                'immagine' => $row['immagine']
+            ];
+        }
+        echo json_encode($listaSpesa);
+    } else {
+        echo json_encode([]); // Nessun elemento trovato
     }
-
-    // Recupera gli elementi della lista della spesa dal database
-    $userId = $_SESSION['user_id']; // Assumendo che l'ID utente sia salvato nella sessione
-    $query = "SELECT * FROM lista_spesa WHERE user_id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $userId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $listaSpesa = $result->fetch_all(MYSQLI_ASSOC);
-
+} catch (Exception $e) {
+    echo json_encode(['error' => $e->getMessage()]);
+}
 ?>

@@ -1,18 +1,12 @@
 <?php
-
     session_start();
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
-    if (!isset($_SESSION['userData']['id'])) {
-        echo json_encode(['error' => 'Utente non autenticato.']);
-        exit;
-    }
-
     require_once("../includes/conn.php");
+    require_once("../DB/DBRicette.php");
 
-    // Controlla se l'utente è autenticato
     if (!isset($_SESSION['userData']['id'])) {
         echo json_encode(['error' => 'Utente non autenticato.']);
         exit;
@@ -21,16 +15,10 @@
     $userId = $_SESSION['userData']['id'];
 
     try {
-        // Query per recuperare tutte le colonne della tabella ricetta per le ricette preferite dell'utente
-        $stmt = $conn->prepare("
-            SELECT r.* 
-            FROM ricettePreferite rp
-            JOIN ricetta r ON rp.idRicetta = r.id
-            WHERE rp.idUtente = ?
-        ");
-        $stmt->bind_param("i", $userId);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $dbRicette = new DBRicette($conn);
+
+        // Recupera le ricette preferite dell'utente
+        $result = $dbRicette->getRicettePreferite($userId);
 
         // Controlla se ci sono risultati
         if ($result->num_rows > 0) {
@@ -44,6 +32,5 @@
         }
     } catch (Exception $e) {
         echo json_encode(['error' => $e->getMessage()]);
-    }
-
+}
 ?>

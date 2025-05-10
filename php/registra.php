@@ -16,6 +16,7 @@ require_once("../includes/conn.php");
   </div>
   
   <div class="container">
+    
     <h2>Registrati</h2>
     
     <label for="username">Username</label>

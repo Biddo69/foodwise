@@ -1,156 +1,82 @@
 <?php
+session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+require_once("../includes/conn.php");
+require_once("../DB/DBIngredienti.php");
 
-    session_start();
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
-    require_once("../includes/conn.php");
+if (!isset($_SESSION['userData']['id'])) {
+    echo json_encode(['error' => 'Utente non autenticato.']);
+    exit;
+}
 
-    if (!isset($_SESSION['userData']['id'])) {
-        echo json_encode(['error' => 'Utente non autenticato.']);
-        exit;
-    }
+if (isset($_GET['nome'])) {
+    $nomeIngrediente = htmlspecialchars($_GET['nome']);
+    $apiKey = '0072b1f00e0c42dbbd1757f463c8d8c9';
+    $url = "https://api.spoonacular.com/food/ingredients/search?query=" . urlencode($nomeIngrediente) . "&apiKey=" . $apiKey;
 
-    if (isset($_GET['nome'])) {
-        $nomeIngrediente = htmlspecialchars($_GET['nome']);
-        $apiKey = '0072b1f00e0c42dbbd1757f463c8d8c9';
-        $url = "https://api.spoonacular.com/food/ingredients/search?query=" . urlencode($nomeIngrediente) . "&apiKey=" . $apiKey;
-
-        try {
-            $response = file_get_contents($url);
-            if ($response == false) {
-                throw new Exception("Errore nella richiesta all'API.");
-            }
-            $data = json_decode($response, true);
-
-            if (!isset($data['results']) || count($data['results']) == 0) {
-                throw new Exception("Nessun ingrediente trovato con il nome specificato.");
-            }
-
-            // Prende il primo risultato, che in teoria è il più rilevante ma ci sono delle anomalie
-            $ingrediente = $data['results'][0];
-
-            //l'id mi serve per eseguire la richiesta dei dettagli nutrizionali
-            $idIngrediente = $ingrediente['id'];
-
-            // URL per ottenere i dettagli nutrizionali dell'ingrediente
-            $urlDettagli = "https://api.spoonacular.com/food/ingredients/$idIngrediente/information?amount=100&unit=gram&apiKey=" . $apiKey;
-            $responseDettagli = file_get_contents($urlDettagli);
-            if ($responseDettagli == false) {
-                throw new Exception("Errore nella richiesta dei dettagli nutrizionali.");
-            }
-            $dettagli = json_decode($responseDettagli, true);
-
-            // Controlla se l'ingrediente esiste già nel database
-            $queryCheck = "SELECT id FROM ingrediente WHERE nome = ?";
-            $stmtCheck = $conn->prepare($queryCheck);
-            $stmtCheck->bind_param("s", $nomeIngrediente);
-            $stmtCheck->execute();
-            $resultCheck = $stmtCheck->get_result();
-
-            //se l'ingrediente non esiste nel database lo inserisco 
-            if ($resultCheck->num_rows == 0) {
-            
-                // Prepara i dati per l'inserimento nel database
-                //?? fa i soliti controlli, nel caso non lo da imposta il nome che ha ottenuto dal get
-                $nome = $dettagli['name'] ?? $nomeIngrediente;
-                $immagine = isset($dettagli['image']) ? "https://spoonacular.com/cdn/ingredients_100x100/" . $dettagli['image'] : 'Immagine non disponibile';
-
-                //in pratica la quantità del nutriente si trova all'interno di nutrients, a sua volta in nutrition
-                // $calorie = $dettagli['nutrition']['nutrients'][0]['amount'] ?? 0;
-                // $proteine = $dettagli['nutrition']['nutrients'][1]['amount'] ?? 0;
-                // $grassi = $dettagli['nutrition']['nutrients'][2]['amount'] ?? 0;
-                // $carboidrati = $dettagli['nutrition']['nutrients'][3]['amount'] ?? 0;
-                // $zucchero = $dettagli['nutrition']['nutrients'][5]['amount'] ?? 0;
-                // $sodio = $dettagli['nutrition']['nutrients'][7]['amount'] ?? 0;
-                // $categoria = $dettagli['categoryPath'][0] ?? 'Generico';
-
-                // Query per inserire i dati nel database
-                // $query = "INSERT INTO ingrediente (nome, immagine, calorie, proteine, grassi, carboidrati, zucchero, sodio, categoria)
-
-                $query = "INSERT INTO ingrediente (id, nome, immagine)
-                        VALUES (?, ?, ?)";
-
-                $stmt = $conn->prepare($query);
-                $stmt->bind_param(
-                    // "ssdddddds",
-                    "iss",
-                    $idIngrediente,
-                    $nome,
-                    $immagine,
-                    // $calorie,
-                    // $proteine,
-                    // $grassi,
-                    // $carboidrati,
-                    // $zucchero,
-                    // $sodio,
-                    // $categoria
-                );
-                $stmt->execute();
-            } 
-            else {
-                $rowIngrediente = $resultCheck->fetch_assoc();
-                $idIngrediente = $rowIngrediente['id']; // Ottieni l'id dell'ingrediente esistente
-            }
-
-        
-
-            // Controlla se la lista esiste già nel database
-            $querylista = "SELECT id FROM listaSpesa WHERE idUtente = ?";
-            $stmtlista = $conn->prepare($querylista);
-            $stmtlista->bind_param("i", $_SESSION["userData"]["id"]);
-            $stmtlista->execute();
-            $resultlista = $stmtlista->get_result();   
-
-            if ($resultlista->num_rows == 0) {
-                // Crea una nuova lista con il nome generico "listaDellaSpesa"
-                $nomeLista = "listaDellaSpesa";
-                $queryCreaLista = "INSERT INTO listaSpesa (nome, idUtente) VALUES (?, ?)";
-                $stmtCreaLista = $conn->prepare($queryCreaLista);
-                $stmtCreaLista->bind_param("si", $nomeLista, $_SESSION["userData"]["id"]);
-                
-                if (!$stmtCreaLista->execute()) {
-                    throw new Exception("Errore durante la creazione della lista della spesa.");
-                }
-            }
-            else if ($resultlista->num_rows > 0) {
-                $rowLista = $resultlista->fetch_assoc();
-                $idLista = $rowLista['id'];
-            } 
-            else {
-                throw new Exception("Errore nel recupero della lista della spesa.");
-            }
-
-            // Controlla se l'ingrediente è già presente nella lista
-            $queryCheckIngredienteInLista = "SELECT idLista FROM ingredienteinlista WHERE idLista = ? AND idIngrediente = ?";
-            $stmtCheckIngredienteInLista = $conn->prepare($queryCheckIngredienteInLista);
-            $stmtCheckIngredienteInLista->bind_param("ii", $idLista, $idIngrediente);
-            $stmtCheckIngredienteInLista->execute();
-            $resultCheckIngredienteInLista = $stmtCheckIngredienteInLista->get_result();
-
-            if ($resultCheckIngredienteInLista->num_rows > 0) {
-                echo json_encode(['success' => false, 'message' => "L'ingrediente è già presente nella lista."]);
-                exit;
-            }
-
-            // Inserisce l'ingrediente nella tabella listaIngrediente
-            $queryInserisciIngrediente = "INSERT INTO ingredienteinlista (idLista, idIngrediente) VALUES (?, ?)";
-            $stmtInserisciIngrediente = $conn->prepare($queryInserisciIngrediente);
-            $stmtInserisciIngrediente->bind_param("ii", $idLista, $idIngrediente);
-
-            if ($stmtInserisciIngrediente->execute()) {
-                echo json_encode(['success' => true, 'message' => "Ingrediente aggiunto alla lista della spesa."]);
-            } else {
-                throw new Exception("Errore durante l'aggiunta dell'ingrediente alla lista.");
-            }
-
-
-
-        } catch (Exception $e) {
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    try {
+        $response = file_get_contents($url);
+        if ($response == false) {
+            throw new Exception("Errore nella richiesta all'API.");
         }
-    } else {
-        echo json_encode(['success' => false, 'message' => isset($e) ? $e->getMessage() : "Parametro 'nome' mancante."]);
-    }
+        $data = json_decode($response, true);
 
+        if (!isset($data['results']) || count($data['results']) == 0) {
+            throw new Exception("Nessun ingrediente trovato con il nome specificato.");
+        }
+
+        $ingrediente = $data['results'][0];
+        $idIngrediente = $ingrediente['id'];
+
+        $urlDettagli = "https://api.spoonacular.com/food/ingredients/$idIngrediente/information?amount=100&unit=gram&apiKey=" . $apiKey;
+        $responseDettagli = file_get_contents($urlDettagli);
+        if ($responseDettagli == false) {
+            throw new Exception("Errore nella richiesta dei dettagli nutrizionali.");
+        }
+        $dettagli = json_decode($responseDettagli, true);
+
+        $dbIngredienti = new DBIngredienti($conn);
+
+        // Controlla se l'ingrediente esiste già
+        $resultCheck = $dbIngredienti->checkIngredienteEsistente($nomeIngrediente);
+        if ($resultCheck->num_rows == 0) {
+            $nome = $dettagli['name'] ?? $nomeIngrediente;
+            $immagine = isset($dettagli['image']) ? "https://spoonacular.com/cdn/ingredients_100x100/" . $dettagli['image'] : 'Immagine non disponibile';
+            $dbIngredienti->inserisciIngrediente($idIngrediente, $nome, $immagine);
+        } else {
+            $rowIngrediente = $resultCheck->fetch_assoc();
+            $idIngrediente = $rowIngrediente['id'];
+        }
+
+        // Controlla se la lista esiste
+        $resultLista = $dbIngredienti->checkListaEsistente($_SESSION["userData"]["id"]);
+        if ($resultLista->num_rows == 0) {
+            $nomeLista = "listaDellaSpesa";
+            $dbIngredienti->creaLista($nomeLista, $_SESSION["userData"]["id"]);
+            $resultLista = $dbIngredienti->checkListaEsistente($_SESSION["userData"]["id"]);
+        }
+        $rowLista = $resultLista->fetch_assoc();
+        $idLista = $rowLista['id'];
+
+        // Controlla se l'ingrediente è già nella lista
+        $resultCheckIngredienteInLista = $dbIngredienti->checkIngredienteInLista($idLista, $idIngrediente);
+        if ($resultCheckIngredienteInLista->num_rows > 0) {
+            echo json_encode(['success' => false, 'message' => "L'ingrediente è già presente nella lista."]);
+            exit;
+        }
+
+        // Aggiungi l'ingrediente alla lista
+        if ($dbIngredienti->aggiungiIngredienteALista($idLista, $idIngrediente)) {
+            echo json_encode(['success' => true, 'message' => "Ingrediente aggiunto alla lista della spesa."]);
+        } else {
+            throw new Exception("Errore durante l'aggiunta dell'ingrediente alla lista.");
+        }
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    }
+} else {
+    echo json_encode(['success' => false, 'message' => "Parametro 'nome' mancante."]);
+}
 ?>

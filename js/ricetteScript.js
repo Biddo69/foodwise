@@ -1,7 +1,7 @@
 async function cercaRicette() {
     let parametro = document.getElementById('parametro').value.trim();
     if (!parametro) {
-        alert("Inserisci una ricetta da cercare.");
+        document.getElementById("preferiti").innerHTML = "<li class='messaggio'>Inserisci una ricetta.</li>";  
         return;
     }
 
@@ -139,6 +139,7 @@ async function aggiungiAiPreferiti(nomeRicetta) {
 }
 
 async function visualizzaPreferiti() {
+    
     let url = "../ajax/visualizzaPreferiti.php";
 
     try {
