@@ -22,6 +22,9 @@ try {
     if ($responseDettagli === false) {
         throw new Exception("Errore nella richiesta a ottieniDettagliRicetta.php.");
     }
+        // URL per richiamare `ottieniDettagliRicetta.php`
+        $urlDettagli = "http://localhost/5C/progetto/foodwise/ajax/ottieniDettagliRicetta.php?nome=" . urlencode($nomeRicetta);
+        $responseDettagli = file_get_contents($urlDettagli);
 
     $data = json_decode($responseDettagli, true);
 
