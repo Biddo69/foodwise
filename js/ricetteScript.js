@@ -76,7 +76,7 @@ async function dettagliRicetta(nomeRicetta) {
             );
 
             // Controlla se gli ingredienti sono presenti
-            if (!ricetta.ingredients || ricetta.ingredients.length === 0) {
+            if (!ricetta.ingredients || ricetta.ingredients.length == 0) {
                 console.warn("Nessun ingrediente trovato per questa ricetta.");
                 ricetta.ingredients = ["Ingredienti non disponibili"];
             }
@@ -143,6 +143,8 @@ async function aggiungiAiPreferiti(nomeRicetta) {
 
 async function visualizzaPreferiti() {
     let url = "../ajax/visualizzaPreferiti.php";
+    let divMessaggio = document.getElementById("messaggio")
+    divMessaggio.innerHTML = "";
 
     try {
         let response = await fetch(url);
@@ -152,8 +154,8 @@ async function visualizzaPreferiti() {
 
         let datiRicevuti = await response.json();
 
-        if (datiRicevuti.length === 0) {
-            document.getElementById("preferiti").innerHTML = "<li class='messaggio'>Nessuna ricetta preferita trovata.</li>";
+        if (datiRicevuti.length == 0) {
+            divMessaggio.innerHTML = `<p class='errore'>Nessuna ricetta preferita trovata.</p>`;
             return;
         }
 

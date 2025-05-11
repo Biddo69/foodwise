@@ -1,9 +1,13 @@
 <?php
 
-    session_start();
+    if(!isset($_SESSION)) {
+        session_start();
+    }
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
+
+    require_once("../includes/apiKey.php");
 
     if (!isset($_SESSION['userData']['id'])) {
         echo json_encode(['error' => 'Utente non autenticato.']);
@@ -13,7 +17,6 @@
     // Recupera il parametro di ricerca dalla query string
     $query = isset($_GET['parametro']) ? urlencode($_GET['parametro']) : '';
     $numEl = 5;
-    $apiKey = '0072b1f00e0c42dbbd1757f463c8d8c9';
     
     if (empty($query)) {
         echo json_encode(['error' => "Parametro 'parametro' mancante o vuoto."]);
@@ -26,7 +29,7 @@
         $response = file_get_contents($url);
 
 
-        if ($response === false) {
+        if ($response == false) {
             throw new Exception("Errore nella richiesta all'API.");
         }
 

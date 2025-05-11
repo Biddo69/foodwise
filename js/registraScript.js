@@ -1,5 +1,7 @@
 async function verificaCredenziali() {
-
+  let divMessaggio = document.getElementById("messaggio")
+  divMessaggio.innerHTML = "";
+  
   let username = document.querySelector('input[name="username"]').value;
   let email = document.querySelector('input[name="email"]').value;
   let password = document.querySelector('input[name="password"]').value;
@@ -22,10 +24,9 @@ async function verificaCredenziali() {
   console.log(datiRicevuti);
 
   if (datiRicevuti["status"]=="ERR")
-    alert(datiRicevuti["msg"]);
+    divMessaggio.innerHTML = `<p class='errore'>${datiRicevuti["msg"]}</p>`;
 
   else if (datiRicevuti["status"]=="OK"){
-    //alert("Registrazione avvenuta con successo!");
     window.location.href = "index.php";
   }
 

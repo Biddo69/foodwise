@@ -1,14 +1,15 @@
 <?php
-
+    if(!isset($_SESSION)) {
+        session_start();
+    }
 
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
-    session_start();
-
+    
+    require_once("../includes/apiKey.php");
 
     $query = isset($_GET['nome']) ? $_GET['nome'] : '';
-    $apiKey = '0072b1f00e0c42dbbd1757f463c8d8c9';
 
     if (empty($query)) {
         echo json_encode(['error' => "Parametro 'nome' mancante o vuoto."]);
@@ -29,7 +30,7 @@
             throw new Exception("Errore nella decodifica del JSON.");
         }
 
-        if (!is_array($data) || !isset($data['results']) || count($data['results']) === 0) {
+        if (!is_array($data) || !isset($data['results']) || count($data['results']) == 0) {
             throw new Exception("Nessuna ricetta trovata.");
         }
 

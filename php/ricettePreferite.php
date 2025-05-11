@@ -11,7 +11,6 @@
     }
 ?>
     <script src="../js/ricetteScript.js"></script> <!-- Carica il file ricetteScript.js -->
-    <div id="messaggio" class="messaggio"></div>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             visualizzaPreferiti(); // Chiamata automatica alla funzione per generare la lista
@@ -19,6 +18,7 @@
     </script>
 
     <h1>Le tue ricette preferite</h1>
+    <div id="messaggio" class="messaggio"></div>
 
     <!-- Contenitore per la lista delle ricette preferite -->
     <ul id="preferiti" class="lista-ricette"></ul> <!-- Aggiungi una classe per lo stile -->
