@@ -47,7 +47,8 @@
 
             if ($sesso == "M") {
                 $bmr = 10 * $peso + 6.25 * $altezza - 5 * $eta + 5; // Formula per uomini
-            } elseif ($sesso == "F") {
+            } 
+            else if ($sesso == "F") {
                 $bmr = 10 * $peso + 6.25 * $altezza - 5 * $eta - 161; // Formula per donne
             }
 
@@ -58,24 +59,15 @@
             $_SESSION["userData"] = $userData;
             $_SESSION["autenticato"] = true;
 
-            echo json_encode([
-                "status" => "OK",
-                "msg" => "Accesso completato con successo.",
-                "calorie_giornaliere" => $bmr,
-                "eta" => $eta
-            ]);
+            echo json_encode([ "status" => "OK", "msg" => "Accesso completato con successo.",]);
             die();
-        } else {
-            echo json_encode([
-                "status" => "ERR",
-                "msg" => "Credenziali non valide."
-            ]);
+        } 
+        else {
+            echo json_encode([ "status" => "ERR", "msg" => "Credenziali non valide." ]);
             die();
         }
-    } catch (Exception $e) {
-        echo json_encode([
-            "status" => "ERR",
-            "msg" => "Si è verificato un errore: " . $e->getMessage()
-        ]);
+    } 
+    catch (Exception $e) {
+        echo json_encode([ "status" => "ERR", "msg" => "Si è verificato un errore: " . $e->getMessage() ]);
     }
 ?>

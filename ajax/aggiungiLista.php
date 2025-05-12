@@ -34,7 +34,7 @@
             $ingrediente = $data['results'][0];
             $idIngrediente = $ingrediente['id'];
 
-            // Effettua una seconda richiesta per ottenere i dettagli nutrizionali
+            // Effettua una seconda richiesta per ottenere i dettagli nutrizionali (non funziona)
             $urlDettagli = "https://api.spoonacular.com/food/ingredients/$idIngrediente/information?amount=100&unit=gram&apiKey=" . $apiKey;
             $responseDettagli = file_get_contents($urlDettagli);
             if ($responseDettagli == false) {

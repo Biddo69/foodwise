@@ -17,11 +17,11 @@
 
         $nomeRicetta = $_GET['nome'];
 
-        // URL per richiamare `ottieniDettagliRicetta.php`
+        // URL per richiamare `ottieniDettagliRicetta.php
         $urlDettagli = $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/ottieniDettagliRicetta.php?nome=" . urlencode($nomeRicetta);
         $responseDettagli = file_get_contents($urlDettagli);
 
-        if ($responseDettagli === false) {
+        if ($responseDettagli == false) {
             throw new Exception("Errore nella richiesta a ottieniDettagliRicetta.php.");
         }
 
@@ -93,7 +93,7 @@
         $resultCheck = $dbRicette->checkPianoCalorico($dataCorrente, $idUtente);
 
         if ($resultCheck->num_rows > 0) {
-            // Esiste già una riga, somma i valori
+            // Se esiste già una riga, somma i valori
             $row = $resultCheck->fetch_assoc();
             $calorie += $row['calorie'];
             $proteine += $row['proteine'];
@@ -108,7 +108,7 @@
                 throw new Exception("Errore durante l'aggiornamento del piano calorico.");
             }
         } else {
-            // Non esiste una riga, inserisci i nuovi valori
+            // Se non esiste una riga, inserisci i nuovi valori
             if ($dbRicette->inserisciPianoCalorico($dataCorrente, $calorie, $proteine, $carboidrati, $grassi, $zuccheri, $sodio, $idUtente)) {
                 echo json_encode(['success' => true, 'message' => "Ricetta consumata con successo."]);
             } else {

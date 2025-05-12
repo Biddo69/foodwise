@@ -30,7 +30,7 @@
             throw new Exception("Errore nella decodifica del JSON.");
         }
 
-        if (!is_array($data) || !isset($data['results']) || count($data['results']) == 0) {
+        if (!isset($data['results']) || count($data['results']) == 0) {
             throw new Exception("Nessuna ricetta trovata.");
         }
 
@@ -50,7 +50,7 @@
 
         // Estrai gli ingredienti
         $ingredients = [];
-        if (isset($detailsData['extendedIngredients']) && is_array($detailsData['extendedIngredients'])) {
+        if (isset($detailsData['extendedIngredients'])) {
             $ingredients = array_map(function ($ingredient) {
                 return [
                     'id' => $ingredient['id'] ?? null, // ID dell'ingrediente
@@ -90,7 +90,6 @@
         echo json_encode(['success' => true, 'results' => [$result]]);
 
     } catch (Exception $e) {
-        // Gestione degli errori
         header('Content-Type: application/json');
         echo json_encode(['success' => false, 'error' => $e->getMessage()]);
     }

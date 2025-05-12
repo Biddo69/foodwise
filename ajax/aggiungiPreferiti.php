@@ -1,5 +1,7 @@
 <?php
-    session_start();
+    if(!isset($_SESSION)) {
+        session_start();
+    }
     require_once("../includes/conn.php");
     require_once("../DB/DBRicette.php");
 
@@ -16,7 +18,7 @@
         exit;
     }
 
-    $nomeRicetta = htmlspecialchars($_GET['nome']); // Sanifica l'input
+    $nomeRicetta = htmlspecialchars($_GET['nome']);
 
     try {
         $urlDettagli = $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/ottieniDettagliRicetta.php?nome=" . urlencode($nomeRicetta);

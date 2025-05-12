@@ -17,18 +17,12 @@
 
         // Validazione dei dati
         if (!$username || !$email || !$dataNascita || !$peso || !$altezza || !$sesso) {
-            echo json_encode([
-                "status" => "ERR",
-                "msg" => "Tutti i campi sono obbligatori."
-            ]);
+            echo json_encode([ "status" => "ERR", "msg" => "Tutti i campi sono obbligatori." ]);
             die();
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            echo json_encode([
-                "status" => "ERR",
-                "msg" => "L'indirizzo email non è valido."
-            ]);
+            echo json_encode([ "status" => "ERR", "msg" => "L'indirizzo email non è valido." ]);
             die();
         }
 
@@ -37,10 +31,7 @@
         // Controlla se username o email esistono già
         $result = $dbUtenti->checkUtenteEsistente($username, $email);
         if ($result->num_rows > 0) {
-            echo json_encode([
-                "status" => "ERR",
-                "msg" => "L'username o l'email sono già in uso."
-            ]);
+            echo json_encode([ "status" => "ERR", "msg" => "L'username o l'email sono già in uso." ]);
             die();
         }
 
@@ -50,19 +41,13 @@
         $eta = $dataCorrente->diff($dataNascitaObj)->y;
 
         if ($eta < 12 || $eta > 120) {
-            echo json_encode([
-                "status" => "ERR",
-                "msg" => "L'utente deve avere un'età compresa tra i 12 e i 120 anni."
-            ]);
+            echo json_encode([ "status" => "ERR", "msg" => "L'utente deve avere un'età compresa tra i 12 e i 120 anni." ]);
             die();
         }
 
         // Validazione del peso e dell'altezza
         if ($peso < 10 || $peso > 700) {
-            echo json_encode([
-                "status" => "ERR",
-                "msg" => "Il peso deve essere un numero valido."
-            ]);
+            echo json_encode([ "status" => "ERR", "msg" => "Il peso deve essere un numero valido." ]);
             die();
         }
 

@@ -42,7 +42,7 @@
 
         // Estrai i risultati
         $results = array_map(function ($item) {
-            $baseImageUrl = "https://spoonacular.com/cdn/ingredients_100x100/"; // Base URL per le immagini
+            $baseImageUrl = "https://spoonacular.com/cdn/ingredients_100x100/";
             return [
                 //in questo caso uso ?? per impostare un valore di default se non esiste
                 'nome' => $item['name'] ?? 'Nome non disponibile',
@@ -51,7 +51,6 @@
                 'id' => $item['id'] ?? null
             ];
         }, $data);
-        
         
         echo json_encode($results);
     } catch (Exception $e) {
