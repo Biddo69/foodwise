@@ -18,9 +18,9 @@
     <div class="header">
         <img src="../img/logo.png" alt="FoodWise Logo">
     </div>
-    <div id="messaggio" class="messaggio"></div>
     <div class="container">
         <h2>Accedi</h2>
+        <div id="messaggio" class="messaggio"></div>
         
         <label for="email">E-mail</label>
         <input type="email" id="email" name="email" required>
